@@ -4,6 +4,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import AlumnoLogin from "./pages/AlumnoLogin";
 import TutorLogin from "./pages/TutorLogin";
+import Register from './pages/Register';
 
 export const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "ingresar/alumno", element: <AlumnoLogin /> },
       { path: "ingresar/tutor", element: <TutorLogin /> },
+      { path: "register", element: <Register /> },
     ],
   },
 ]);
