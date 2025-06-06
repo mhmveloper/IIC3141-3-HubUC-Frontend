@@ -1,16 +1,71 @@
-# Teacher UC
+# TeacherUC 👨‍🎓👩‍🎓
 
-Work in Progress
+Plataforma para conectar estudiantes con tutores.
 
-# React + Vite
+## 📦 Requisitos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Node.js** `>= 18.18.0`
+- **NPM** `>= 9`
+- **Docker** y **Docker Compose** instalados
+- (Opcional) **Python 3.11+** si deseas ejecutar el backend sin Docker
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Setup
 
-## Expanding the ESLint configuration
+### 1. Clona el repositorio
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. Añade las variables de entorno del backend
+
+Crea un archivo `.env` junto a `docker-compose.yml` con las siguientes variables:
+
+```
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
+DATABASE_URL
+```
+
+### 3. Correr backend con Docker
+
+```
+docker-compose up --build
+```
+
+### 4. Setup del frontend
+
+```
+npm install
+```
+
+### 5. Añade las variables de entorno de frontend
+
+```
+VITE_API_URL
+```
+
+### 6. Correr frontend
+
+```
+npm run dev
+```
+
+## 🚀 Setup local
+### 1. Clonar repositorio
+
+### 2. Añade las variables de entorno de frontend
+
+```
+VITE_API_URL
+```
+
+### 3. Ejecutar
+
+```
+npm install
+```
+
+### 4. Ejecutar
+
+```
+npm run dev
+```

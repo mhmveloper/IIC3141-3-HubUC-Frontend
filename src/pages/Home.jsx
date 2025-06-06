@@ -15,14 +15,14 @@ export default function Home() {
       <div className="flex flex-col items-center gap-6 mt-8 w-full max-w-xs">
         <Link
           to="/ingresar/alumno"
-          className="bg-violet-600 hover:bg-violet-800 text-white px-6 py-3 rounded-xl text-center w-full"
+          className="bg-violet-600 hover:bg-violet-800 text-white shadow-lg shadow-violet-600/30 px-6 py-3 duration-200 rounded-xl text-center w-full"
         >
           Ingresar como Alumno
         </Link>
 
         <Link
           to="/ingresar/tutor"
-          className="bg-white hover:bg-violet-300 hover:text-white shadow-lg shadow-violet-600/50 text-violet-600 duration-300 px-6 py-3 rounded-xl text-center w-full"
+          className="bg-white hover:bg-violet-300 hover:text-white shadow-lg shadow-violet-600/30 text-violet-600 duration-200 px-6 py-3 rounded-xl text-center w-full"
         >
           Ingresar como Tutor
         </Link>
