@@ -4,7 +4,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import AlumnoLogin from "./pages/AlumnoLogin";
 import TutorLogin from "./pages/TutorLogin";
-import Register from './pages/Register';
+import Register from './components/common/Register';
 
 export const router = createBrowserRouter([
   {
