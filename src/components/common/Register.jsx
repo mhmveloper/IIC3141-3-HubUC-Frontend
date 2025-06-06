@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import api from '../../services/api';
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -9,8 +11,7 @@ export default function Register() {
     role: 'student',
   });
 
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,14 +19,17 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(false);
+    setMessage(null);
 
     try {
       await api.post('/register', form);
-      setSuccess(true);
+      setMessage('✅ Registro exitoso');
+      setTimeout(() => {
+        navigate('/clases');
+      }, 1000);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Error al registrar');
+      const detail = err.response?.data?.detail || 'Error al registrar';
+      setMessage(`❌ ${typeof detail === 'string' ? detail : JSON.stringify(detail)}`);
     }
   };
 
@@ -33,8 +37,11 @@ export default function Register() {
     <div className="max-w-md mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Registro</h2>
 
-      {success && <p className="text-green-600">Registro exitoso 🎉</p>}
-      {error && <p className="text-red-600">{JSON.stringify(error)}</p>}
+      {message && (
+        <p className={`text-sm mb-4 ${message.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+          {message}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

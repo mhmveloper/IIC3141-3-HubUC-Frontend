@@ -5,16 +5,22 @@ import Home from "./pages/Home";
 import AlumnoLogin from "./pages/AlumnoLogin";
 import TutorLogin from "./pages/TutorLogin";
 import Register from './components/common/Register';
+import Clases from './pages/Clases';
+import Perfil from './pages/Perfil';
+import ClasesTutor from './pages/ClasesTutor';
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // layout principal con <Outlet />
+    element: <App />,
     children: [
       { index: true, element: <Home /> },
       { path: "ingresar/alumno", element: <AlumnoLogin /> },
       { path: "ingresar/tutor", element: <TutorLogin /> },
       { path: "register", element: <Register /> },
+      { path: 'clases', element: <Clases /> },
+      { path: 'perfil', element: <Perfil /> },
+      { path: 'solicitudes', element: <ClasesTutor /> },
     ],
   },
 ]);

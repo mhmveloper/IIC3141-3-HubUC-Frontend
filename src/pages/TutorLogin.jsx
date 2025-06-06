@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function TutorLogin() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
     name: '',
@@ -33,6 +36,9 @@ export default function TutorLogin() {
 
       const res = await api.post(endpoint, payload);
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
+      if (isLogin) {
+        navigate('/solicitudes');
+      }
     } catch (err) {
       const detail = err.response?.data?.detail || 'Error inesperado';
       setMessage(`❌ ${typeof detail === 'string' ? detail : JSON.stringify(detail)}`);
@@ -87,7 +93,7 @@ export default function TutorLogin() {
 
         <button
           type="submit"
-          className="bg-violet-600 hover:bg-violet-700 py-2 rounded text-white font-semibold"
+          className="bg-violet-600 hover:bg-violet-800 py-2 rounded text-white font-semibold"
         >
           {isLogin ? 'Ingresar' : 'Registrarse'}
         </button>
