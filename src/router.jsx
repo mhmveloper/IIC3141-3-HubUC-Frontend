@@ -4,7 +4,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import AlumnoLogin from "./pages/AlumnoLogin";
 import TutorLogin from "./pages/TutorLogin";
-import Register from './pages/Register';
+import Register from './components/common/Register';
 import Clases from './pages/Clases';
 import Perfil from './pages/Perfil';
 import ClasesTutor from './pages/ClasesTutor';
