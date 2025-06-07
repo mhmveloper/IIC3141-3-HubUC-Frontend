@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import PublicarClase from '../components/tutor/PublicarClase';
 
 export default function ClasesTutor() {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ export default function ClasesTutor() {
           </button>
         </div>
       </div>
+      <PublicarClase />
 
       <div className="flex flex-col gap-4">
         {solicitudes.map((s) => (
