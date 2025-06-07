@@ -57,9 +57,9 @@ export default function PublicarClase() {
     <div className="mb-8">
       <button
         onClick={() => setExpandido(!expandido)}
-        className="w-full text-left bg-neutral-900 text-white border border-violet-600 px-4 py-3 font-semibold rounded hover:bg-neutral-800 transition-colors"
+        className="w-full text-left bg-neutral-900 text-white border border-violet-600 px-4 py-4 font-semibold rounded hover:bg-neutral-800 transition-colors"
       >
-        {expandido ? '▼' : '▶'} Publicar nueva clase
+        {expandido ? '➖' : '➕'} Publicar nueva clase
       </button>
 
 
