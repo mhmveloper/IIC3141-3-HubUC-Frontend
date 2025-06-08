@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../services/api';
+import Reservacion from './Reservacion';
 
 export default function Clases({ initialLessons = null }) {
   const navigate = useNavigate();
@@ -15,15 +16,37 @@ export default function Clases({ initialLessons = null }) {
   const [tutorCache, setTutorCache] = useState({});
   const [allLessons, setAllLessons] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [tutors, setTutors] = useState([]);
+  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
-  const handleSolicitarClase = (id) => {
-    console.log(`Clase privada ${id} solicitada`);
+  const handleSolicitarClase = (lesson) => {
+    setSelectedLesson(lesson);
+    setShowForm(true);
+  };
+
+  const handleConfirmarSolicitud = async (lessonId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `/reservations/lesson/${lessonId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Clase solicitada exitosamente');
+      setShowForm(false);
+    } catch (e) {
+      console.error('Error al solicitar clase:', e);
+      alert('Hubo un error al solicitar la clase.');
+    }
   };
 
   const handleChange = (e) => {
@@ -43,16 +66,12 @@ export default function Clases({ initialLessons = null }) {
     }
   };
 
-  const fetchAllTutors = async () => {
+  const fetchTutor = async (tutorId) => {
     try {
-      const res = await axios.get('/users?role=tutor');
-      setTutors(res.data);
-      console.log('Tutores cargados:', tutors);
-      const cache = {};
-      res.data.forEach((t) => (cache[t.id] = t));
-      setTutorCache(cache);
+      const res = await axios.get(`/users/${tutorId}`);
+      setTutorCache((prev) => ({ ...prev, [tutorId]: res.data }));
     } catch (e) {
-      console.error('Error cargando tutores:', e);
+      console.error(`Error cargando tutor ${tutorId}:`, e);
     }
   };
 
@@ -62,6 +81,8 @@ export default function Clases({ initialLessons = null }) {
       const response = await axios.get('/private-lessons');
       setAllLessons(response.data);
       setLessons(response.data);
+      const uniqueTutorIds = [...new Set(response.data.map((l) => l.tutor_id))];
+      uniqueTutorIds.forEach((id) => fetchTutor(id));
     } catch (error) {
       console.error('Error cargando todas las clases:', error);
     } finally {
@@ -96,7 +117,6 @@ export default function Clases({ initialLessons = null }) {
     if (initialLessons) return;
     fetchAllLessons();
     fetchAllCourses();
-    fetchAllTutors();
   }, [initialLessons]);
 
   return (
@@ -144,7 +164,6 @@ export default function Clases({ initialLessons = null }) {
         </button>
       </div>
 
-      {/* Resultado */}
       {loading ? (
         <p className="text-center text-neutral-400">Cargando clases...</p>
       ) : (
@@ -183,7 +202,7 @@ export default function Clases({ initialLessons = null }) {
                   </div>
 
                   <button
-                    onClick={() => handleSolicitarClase(lesson.id)}
+                    onClick={() => handleSolicitarClase(lesson)}
                     className="bg-violet-600 hover:bg-violet-800 px-4 py-2 text-sm rounded"
                   >
                     Solicitar clase
@@ -193,6 +212,14 @@ export default function Clases({ initialLessons = null }) {
             })
           )}
         </div>
+      )}
+      {showForm && selectedLesson && (
+        <Reservacion
+          lesson={selectedLesson}
+          courseCache={courseCache}
+          onClose={() => setShowForm(false)}
+          onSubmit={handleConfirmarSolicitud}
+        />
       )}
     </div>
   );
