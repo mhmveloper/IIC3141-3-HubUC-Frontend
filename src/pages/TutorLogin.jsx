@@ -37,6 +37,7 @@ export default function TutorLogin() {
       const res = await api.post(endpoint, payload);
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
       if (isLogin) {
+        localStorage.setItem('token', res.data.access_token);
         navigate('/solicitudes');
       }
     } catch (err) {
