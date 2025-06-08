@@ -1,13 +1,13 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import Home from "./pages/Home";
-import AlumnoLogin from "./pages/AlumnoLogin";
-import TutorLogin from "./pages/TutorLogin";
+import Home from "./pages/common/Home";
+import AlumnoLogin from "./pages/alumno/AlumnoLogin";
+import TutorLogin from "./pages/tutor/TutorLogin";
 import Register from './components/common/Register';
-import Clases from './pages/Clases';
-import Perfil from './pages/Perfil';
-import ClasesTutor from './pages/ClasesTutor';
+import Clases from './pages/alumno/Clases';
+import Perfil from './pages/common/Perfil';
+import ClasesTutor from './pages/tutor/ClasesTutor';
 
 export const router = createBrowserRouter([
   {

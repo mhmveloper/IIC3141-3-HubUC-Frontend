@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PublicarClase from '../components/tutor/PublicarClase';
-import api from '../services/api';
+import PublicarClase from '../../components/tutor/PublicarClase';
+import api from '../../services/api';
 
 export default function ClasesTutor() {
   const navigate = useNavigate();
