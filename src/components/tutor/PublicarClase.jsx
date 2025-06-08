@@ -2,26 +2,30 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
 export default function PublicarClase() {
+  /* ──────────────── State ──────────────── */
   const [ramo, setRamo] = useState('');
-  const [horarios, setHorarios] = useState([]);
+  const [horarios, setHorarios] = useState([]);          // ← sin <string[]>
   const [precio, setPrecio] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [expandido, setExpandido] = useState(false);
   const [ramosDisponibles, setRamosDisponibles] = useState([]);
 
-  const horas = [
+  /* ──────────────── Constantes UI ──────────────── */
+  const HORAS = [
     '08:00', '09:00', '10:00', '11:00',
     '12:00', '13:00', '14:00', '15:00',
     '16:00', '17:00', '18:00', '19:00',
     '20:00',
   ];
-  const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
+  /* ──────────────── Efectos ──────────────── */
   useEffect(() => {
     const fetchRamos = async () => {
       try {
-        const res = await api.get('/courses');
-        setRamosDisponibles(res.data);
+        const { data } = await api.get('/courses');
+        setRamosDisponibles(data);
       } catch {
         setRamosDisponibles([]);
       }
@@ -29,30 +33,34 @@ export default function PublicarClase() {
     fetchRamos();
   }, []);
 
+  /* ──────────────── Handlers ──────────────── */
   const handleHorarioChange = (e) => {
     const { value, checked } = e.target;
     setHorarios((prev) =>
-      checked ? [...prev, value] : prev.filter((h) => h !== value)
+      checked ? [...prev, value] : prev.filter((h) => h !== value),
     );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/clases', {
-        id_ramo: parseInt(ramo),
+      await api.post('/private-lessons', {
+        id_ramo: parseInt(ramo, 10),
         horario: horarios,
         precio: parseFloat(precio),
+        descripcion,
       });
       setMensaje('✅ Clase publicada correctamente');
       setRamo('');
       setHorarios([]);
       setPrecio('');
+      setDescripcion('');
     } catch {
       setMensaje('❌ Error al publicar la clase');
     }
   };
 
+  /* ──────────────── Render ──────────────── */
   return (
     <div className="mb-8">
       <button
@@ -62,74 +70,59 @@ export default function PublicarClase() {
         {expandido ? '➖' : '➕'} Publicar nueva clase
       </button>
 
-
       {expandido && (
         <form
           onSubmit={handleSubmit}
-          className="bg-neutral-800 p-6 rounded-xl mt-4"
+          className="bg-neutral-800 p-6 rounded-xl mt-4 space-y-4"
         >
-          <h2 className="text-lg font-semibold mb-4">Formulario de publicación</h2>
-
-          <label className="block mb-2">Ramo/Curso</label>
-          <select
-            value={ramo}
-            onChange={(e) => setRamo(e.target.value)}
-            required
-            className="mb-4 p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600"
-          >
-            <option value="">Seleccione un ramo</option>
-            {ramosDisponibles.map((r) => (
-              <option key={r.id_ramo} value={r.id_ramo}>
-                {r.nombre}
+          {/* Ramo */}
+          <div>
+            <label className="block mb-2">Ramo/Curso</label>
+            <select
+              value={ramo}
+              onChange={(e) => setRamo(e.target.value)}
+              required
+              className="p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600"
+            >
+              <option key="placeholder" value="">
+                Seleccione un ramo
               </option>
-            ))}
-          </select>
-
-          <label className="block mb-2">Horarios disponibles</label>
-          <div className="overflow-auto mb-4 border border-neutral-700 rounded">
-            <table className="w-full text-sm text-white">
-              <thead className="bg-neutral-800">
-                <tr>
-                  <th className="p-2 text-left">Hora</th>
-                  {dias.map((dia) => (
-                    <th key={dia} className="p-2">{dia}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {horas.map((hora) => (
-                  <tr key={hora} className="border-t border-neutral-700">
-                    <td className="p-2 bg-neutral-800 font-medium">{hora}</td>
-                    {dias.map((dia) => {
-                      const valor = `${dia}-${hora}`;
-                      return (
-                        <td key={valor} className="p-2 text-center">
-                          <input
-                            type="checkbox"
-                            value={valor}
-                            checked={horarios.includes(valor)}
-                            onChange={handleHorarioChange}
-                            className="accent-violet-600"
-                          />
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              {ramosDisponibles.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <label className="block mb-2">Precio por sesión</label>
-          <input
-            type="number"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            placeholder="$ CLP"
-            className="mb-4 p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600"
-            required
-          />
+          {/* Descripción */}
+          <div>
+            <label className="block mb-2">Descripción de la clase</label>
+            <textarea
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              placeholder="Breve descripción del contenido, modalidad, etc."
+              rows={3}
+              maxLength={300}
+              className="p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600 resize-none"
+              required
+            />
+          </div>
 
+          {/* Precio */}
+          <div>
+            <label className="block mb-2">Precio por sesión (CLP)</label>
+            <input
+              type="number"
+              value={precio}
+              onChange={(e) => setPrecio(e.target.value)}
+              placeholder="$ CLP"
+              className="p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600"
+              required
+            />
+          </div>
+
+          {/* Botón enviar */}
           <button
             type="submit"
             className="bg-violet-600 hover:bg-violet-700 px-4 py-2 rounded text-white"
@@ -137,7 +130,8 @@ export default function PublicarClase() {
             Publicar clase
           </button>
 
-          {mensaje && <p className="mt-4 text-sm">{mensaje}</p>}
+          {/* Mensaje */}
+          {mensaje && <p className="text-sm">{mensaje}</p>}
         </form>
       )}
     </div>
