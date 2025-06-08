@@ -69,3 +69,17 @@ npm install
 ```
 npm run dev
 ```
+
+## 🧪 Tests
+
+Este proyecto utiliza [Vitest](https://vitest.dev/) para pruebas unitarias y [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) para la interacción con los componentes.
+
+### 📁 Estructura
+
+Los archivos de test están ubicados junto a sus respectivos componentes, dentro de carpetas `tests/` cuando aplica.
+
+Luego puedes ejecutar los tests con:
+```npx vitest```
+
+O puedes abrir la consola interactiva de tests con
+```npx vitest --ui```
