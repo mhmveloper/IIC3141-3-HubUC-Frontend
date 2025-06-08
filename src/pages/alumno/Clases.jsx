@@ -13,6 +13,9 @@ export default function Clases({ initialLessons = null }) {
 
   const [courseCache, setCourseCache] = useState({});
   const [tutorCache, setTutorCache] = useState({});
+  const [allLessons, setAllLessons] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [tutors, setTutors] = useState([]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -27,25 +30,29 @@ export default function Clases({ initialLessons = null }) {
     setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const fetchCourse = async (courseId) => {
-    if (courseCache[courseId]) return courseCache[courseId];
+  const fetchAllCourses = async () => {
     try {
-      const res = await axios.get(`/courses/${courseId}`);
-      setCourseCache((prev) => ({ ...prev, [courseId]: res.data }));
-      return res.data;
-    } catch {
-      return null;
+      const res = await axios.get('/courses');
+      setCourses(res.data);
+      console.log('Cursos cargados:', courses);
+      const cache = {};
+      res.data.forEach((c) => (cache[c.id] = c));
+      setCourseCache(cache);
+    } catch (e) {
+      console.error('Error cargando cursos:', e);
     }
   };
 
-  const fetchTutor = async (tutorId) => {
-    if (tutorCache[tutorId]) return tutorCache[tutorId];
+  const fetchAllTutors = async () => {
     try {
-      const res = await axios.get(`/users/${tutorId}`);
-      setTutorCache((prev) => ({ ...prev, [tutorId]: res.data }));
-      return res.data;
-    } catch {
-      return null;
+      const res = await axios.get('/users?role=tutor');
+      setTutors(res.data);
+      console.log('Tutores cargados:', tutors);
+      const cache = {};
+      res.data.forEach((t) => (cache[t.id] = t));
+      setTutorCache(cache);
+    } catch (e) {
+      console.error('Error cargando tutores:', e);
     }
   };
 
@@ -53,6 +60,7 @@ export default function Clases({ initialLessons = null }) {
     setLoading(true);
     try {
       const response = await axios.get('/private-lessons');
+      setAllLessons(response.data);
       setLessons(response.data);
     } catch (error) {
       console.error('Error cargando todas las clases:', error);
@@ -61,35 +69,34 @@ export default function Clases({ initialLessons = null }) {
     }
   };
 
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const { course_id, tutor_id } = filters;
+  const handleSearch = () => {
+    const { course_id, tutor_id } = filters;
 
-      if (!course_id && !tutor_id) {
-        fetchAllLessons();
-        return;
-      }
+    const filtered = allLessons.filter((lesson) => {
+      const course = courseCache[lesson.course_id];
+      const tutor = tutorCache[lesson.tutor_id];
 
-      const query = new URLSearchParams({
-        ...(course_id && { course_id: parseInt(course_id).toString() }),
-        ...(tutor_id && { tutor_id: parseInt(tutor_id).toString() }),
-        page: '1',
-        page_size: '10',
-      });
+      const matchCourse =
+        !course_id ||
+        lesson.course_id === Number(course_id) ||
+        (course && course.name.toLowerCase().includes(course_id.toLowerCase()));
 
-      const response = await axios.get(`/private-lessons/search?${query.toString()}`);
-      setLessons(response.data.results);
-    } catch (error) {
-      console.error('Error filtrando clases privadas:', error);
-    } finally {
-      setLoading(false);
-    }
+      const matchTutor =
+        !tutor_id ||
+        lesson.tutor_id === Number(tutor_id) ||
+        (tutor && tutor.name.toLowerCase().includes(tutor_id.toLowerCase()));
+
+      return matchCourse && matchTutor;
+    });
+
+    setLessons(filtered);
   };
 
   useEffect(() => {
     if (initialLessons) return;
     fetchAllLessons();
+    fetchAllCourses();
+    fetchAllTutors();
   }, [initialLessons]);
 
   return (
@@ -112,20 +119,19 @@ export default function Clases({ initialLessons = null }) {
         </div>
       </div>
 
-      {/* Filtros */}
       <div className="bg-neutral-900 p-4 rounded-lg mb-6 flex flex-wrap gap-4">
         <input
           name="course_id"
-          type="number"
-          placeholder="ID Curso"
+          type="text"
+          placeholder="Nombre de curso"
           className="bg-neutral-800 text-white px-3 py-2 rounded"
           value={filters.course_id}
           onChange={handleChange}
         />
         <input
           name="tutor_id"
-          type="number"
-          placeholder="ID Tutor"
+          type="text"
+          placeholder="Nombre del tutor"
           className="bg-neutral-800 text-white px-3 py-2 rounded"
           value={filters.tutor_id}
           onChange={handleChange}
@@ -149,9 +155,6 @@ export default function Clases({ initialLessons = null }) {
             lessons.map((lesson) => {
               const course = courseCache[lesson.course_id];
               const tutor = tutorCache[lesson.tutor_id];
-
-              if (!course) fetchCourse(lesson.course_id);
-              if (!tutor) fetchTutor(lesson.tutor_id);
 
               return (
                 <div
