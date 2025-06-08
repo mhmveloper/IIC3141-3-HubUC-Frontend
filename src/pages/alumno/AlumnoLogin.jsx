@@ -38,6 +38,8 @@ export default function AlumnoLogin() {
 
       if (token) {
         localStorage.setItem('token', token);
+        localStorage.setItem('role', 'student');
+
       }
 
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
