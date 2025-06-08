@@ -36,6 +36,7 @@ export default function AlumnoLogin() {
       const res = await api.post(endpoint, payload);
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
       if (isLogin) {
+        localStorage.setItem('token', res.data.access_token);
         navigate('/clases');
       }
     } catch (err) {
