@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Clases from '../Clases';
@@ -21,7 +21,11 @@ describe('Clases (unit test)', () => {
     },
   ];
 
-  it('renderiza correctamente una lista de clases', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('renderiza correctamente una lista de clases con initialLessons', () => {
     render(
       <MemoryRouter>
         <Clases initialLessons={mockLessons} />
@@ -41,8 +45,8 @@ describe('Clases (unit test)', () => {
     expect(buttons).toHaveLength(2);
   });
 
-  it('llama a la función handleSolicitarClase al hacer click', () => {
-    console.log = vi.fn();
+  it('llama a console.log al hacer click en "Solicitar clase"', () => {
+    const consoleSpy = vi.spyOn(console, 'log');
     render(
       <MemoryRouter>
         <Clases initialLessons={mockLessons} />
@@ -51,6 +55,33 @@ describe('Clases (unit test)', () => {
 
     fireEvent.click(screen.getAllByText('Solicitar clase')[0]);
 
-    expect(console.log).toHaveBeenCalledWith('Clase privada 1 solicitada');
+    expect(consoleSpy).toHaveBeenCalledWith('Clase privada 1 solicitada');
+  });
+
+  it('muestra mensaje de carga si no hay initialLessons', () => {
+    render(
+      <MemoryRouter>
+        <Clases />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Cargando clases...')).toBeInTheDocument();
+  });
+
+  it('permite escribir en los filtros de curso y tutor', () => {
+    render(
+      <MemoryRouter>
+        <Clases initialLessons={mockLessons} />
+      </MemoryRouter>
+    );
+
+    const inputCurso = screen.getByPlaceholderText('ID Curso');
+    const inputTutor = screen.getByPlaceholderText('ID Tutor');
+
+    fireEvent.change(inputCurso, { target: { value: '99' } });
+    fireEvent.change(inputTutor, { target: { value: '88' } });
+
+    expect(inputCurso.value).toBe('99');
+    expect(inputTutor.value).toBe('88');
   });
 });
