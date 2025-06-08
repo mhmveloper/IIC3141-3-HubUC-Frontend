@@ -8,6 +8,8 @@ import Register from './components/common/Register';
 import Clases from './pages/Clases';
 import Perfil from './pages/Perfil';
 import ClasesTutor from './pages/ClasesTutor';
+import Horarios from './pages/HorariosTutor';
+import NuevoHorario from './pages/NuevoHorario';
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
       { path: 'clases', element: <Clases /> },
       { path: 'perfil', element: <Perfil /> },
       { path: 'solicitudes', element: <ClasesTutor /> },
+      { path: 'horarios', element: <Horarios /> },
+      { path: 'horarios/nuevo', element: <NuevoHorario /> },
     ],
   },
 ]);
