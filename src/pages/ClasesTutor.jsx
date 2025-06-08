@@ -7,6 +7,7 @@ export default function ClasesTutor() {
   const navigate = useNavigate();
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
+  console.log(solicitudes)
 
 const handleAceptar = async (id) => {
   try {
