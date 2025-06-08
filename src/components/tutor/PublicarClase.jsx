@@ -20,7 +20,7 @@ export default function PublicarClase() {
   useEffect(() => {
     const fetchRamos = async () => {
       try {
-        const res = await api.get('/ramos');
+        const res = await api.get('/courses');
         setRamosDisponibles(res.data);
       } catch {
         setRamosDisponibles([]);
