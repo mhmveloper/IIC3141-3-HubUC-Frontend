@@ -11,6 +11,9 @@ export default function Clases({ initialLessons = null }) {
     tutor_id: '',
   });
 
+  const [courseCache, setCourseCache] = useState({});
+  const [tutorCache, setTutorCache] = useState({});
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
@@ -24,10 +27,27 @@ export default function Clases({ initialLessons = null }) {
     setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  useEffect(() => {
-    if (initialLessons) return;
-    fetchAllLessons();
-  }, [initialLessons]);
+  const fetchCourse = async (courseId) => {
+    if (courseCache[courseId]) return courseCache[courseId];
+    try {
+      const res = await axios.get(`/courses/${courseId}`);
+      setCourseCache((prev) => ({ ...prev, [courseId]: res.data }));
+      return res.data;
+    } catch {
+      return null;
+    }
+  };
+
+  const fetchTutor = async (tutorId) => {
+    if (tutorCache[tutorId]) return tutorCache[tutorId];
+    try {
+      const res = await axios.get(`/users/${tutorId}`);
+      setTutorCache((prev) => ({ ...prev, [tutorId]: res.data }));
+      return res.data;
+    } catch {
+      return null;
+    }
+  };
 
   const fetchAllLessons = async () => {
     setLoading(true);
@@ -55,7 +75,7 @@ export default function Clases({ initialLessons = null }) {
         ...(course_id && { course_id: parseInt(course_id).toString() }),
         ...(tutor_id && { tutor_id: parseInt(tutor_id).toString() }),
         page: '1',
-        page_size: '100',
+        page_size: '10',
       });
 
       const response = await axios.get(`/private-lessons/search?${query.toString()}`);
@@ -66,6 +86,11 @@ export default function Clases({ initialLessons = null }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (initialLessons) return;
+    fetchAllLessons();
+  }, [initialLessons]);
 
   return (
     <div className="bg-neutral-950 min-h-screen text-white p-8">
@@ -121,33 +146,48 @@ export default function Clases({ initialLessons = null }) {
           {lessons.length === 0 ? (
             <p className="text-center text-neutral-400">No se encontraron clases.</p>
           ) : (
-            lessons.map((lesson) => (
-              <div
-                key={lesson.id}
-                className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-all duration-200 flex justify-between items-center"
-              >
-                <div>
-                  <div className="text-lg font-semibold">Curso ID: {lesson.course_id}</div>
-                  <div className="text-sm text-neutral-400">Tutor ID: {lesson.tutor_id}</div>
-                  <div className="text-sm text-neutral-400">Precio: ${lesson.price}</div>
-                  <div className="text-sm text-neutral-400">
-                    Fecha:{' '}
-                    {new Date(lesson.start_time).toLocaleString('es-CL', {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                      timeZone: 'America/Santiago',
-                    })}
-                  </div>
-                </div>
+            lessons.map((lesson) => {
+              const course = courseCache[lesson.course_id];
+              const tutor = tutorCache[lesson.tutor_id];
 
-                <button
-                  onClick={() => handleSolicitarClase(lesson.id)}
-                  className="bg-violet-600 hover:bg-violet-800 px-4 py-2 text-sm rounded"
+              if (!course) fetchCourse(lesson.course_id);
+              if (!tutor) fetchTutor(lesson.tutor_id);
+
+              return (
+                <div
+                  key={lesson.id}
+                  className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-all duration-200 flex justify-between items-center"
                 >
-                  Solicitar clase
-                </button>
-              </div>
-            ))
+                  <div>
+                    <div className="text-lg font-semibold">
+                      {course ? course.name : `Curso ID: ${lesson.course_id}`}
+                    </div>
+                    <div className="text-sm text-neutral-400">
+                      {course ? course.description : ''}
+                    </div>
+                    <div className="text-sm text-neutral-400">
+                      Tutor: {tutor ? tutor.name : `ID ${lesson.tutor_id}`}
+                    </div>
+                    <div className="text-sm text-neutral-400">Precio: ${lesson.price}</div>
+                    <div className="text-sm text-neutral-400">
+                      Fecha:{' '}
+                      {new Date(lesson.start_time).toLocaleString('es-CL', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                        timeZone: 'America/Santiago',
+                      })}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleSolicitarClase(lesson.id)}
+                    className="bg-violet-600 hover:bg-violet-800 px-4 py-2 text-sm rounded"
+                  >
+                    Solicitar clase
+                  </button>
+                </div>
+              );
+            })
           )}
         </div>
       )}
