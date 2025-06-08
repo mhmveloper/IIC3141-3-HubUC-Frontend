@@ -3,40 +3,54 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Clases from '../Clases';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => vi.fn(),
-  };
-});
+describe('Clases (unit test)', () => {
+  const mockLessons = [
+    {
+      id: 1,
+      course_id: 123,
+      tutor_id: 456,
+      price: 10000,
+      start_time: '2025-06-09T03:56:28.602574',
+    },
+    {
+      id: 2,
+      course_id: 321,
+      tutor_id: 654,
+      price: 20000,
+      start_time: '2025-06-10T18:00:00.000000',
+    },
+  ];
 
-describe('Clases', () => {
-  it('muestra el título y botones de perfil/cerrar sesión', () => {
-    render(<Clases />, { wrapper: MemoryRouter });
+  it('renderiza correctamente una lista de clases', () => {
+    render(
+      <MemoryRouter>
+        <Clases initialLessons={mockLessons} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Clases disponibles')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ver perfil/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /cerrar sesión/i })).toBeInTheDocument();
+    expect(screen.getByText('Curso ID: 123')).toBeInTheDocument();
+    expect(screen.getByText('Tutor ID: 456')).toBeInTheDocument();
+    expect(screen.getByText('Precio: $10000')).toBeInTheDocument();
+
+    expect(screen.getByText('Curso ID: 321')).toBeInTheDocument();
+    expect(screen.getByText('Tutor ID: 654')).toBeInTheDocument();
+    expect(screen.getByText('Precio: $20000')).toBeInTheDocument();
+
+    const buttons = screen.getAllByText('Solicitar clase');
+    expect(buttons).toHaveLength(2);
   });
 
-  it('muestra todas las clases de ejemplo', () => {
-    render(<Clases />, { wrapper: MemoryRouter });
+  it('llama a la función handleSolicitarClase al hacer click', () => {
+    console.log = vi.fn();
+    render(
+      <MemoryRouter>
+        <Clases initialLessons={mockLessons} />
+      </MemoryRouter>
+    );
 
-    expect(screen.getAllByText(/asignatura/i)).toHaveLength(3);
-    expect(screen.getAllByText(/profesor ejemplo/i)).toHaveLength(3);
-    expect(screen.getAllByRole('button', { name: /solicitar clase/i })).toHaveLength(3);
-  });
+    fireEvent.click(screen.getAllByText('Solicitar clase')[0]);
 
-  it('al hacer clic en solicitar clase muestra un console.log (mockeado)', () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    render(<Clases />, { wrapper: MemoryRouter });
-
-    const botones = screen.getAllByRole('button', { name: /solicitar clase/i });
-    fireEvent.click(botones[1]); // click en Asignatura 2
-
-    expect(logSpy).toHaveBeenCalledWith('Clase 2 solicitada');
-
-    logSpy.mockRestore();
+    expect(console.log).toHaveBeenCalledWith('Clase privada 1 solicitada');
   });
 });
