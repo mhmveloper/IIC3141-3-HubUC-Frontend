@@ -1,39 +1,100 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import ClasesTutor from '../ClasesTutor';
+import { describe, it, vi, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+
+// 1. Mock de navigate
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+
+// 2. Mock de PublicarClase
+vi.mock('../../components/tutor/PublicarClase', () => ({
+  default: () => <div>PublicarClaseMock</div>,
+}));
+
+// 3. Mock de la API
+const mockGet = vi.fn();
+const mockPut = vi.fn();
+vi.mock('../../services/api', () => ({
+  default: {
+    get: mockGet,
+    put: mockPut,
+  },
+}));
+
+// 4. Antes de cada test
+beforeEach(() => {
+  mockNavigate.mockReset();
+  mockGet.mockReset();
+  mockPut.mockReset();
+  localStorage.setItem('token', 'mock-token');
+});
 
 describe('ClasesTutor', () => {
-  beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
+  it('muestra las solicitudes cargadas', async () => {
+    mockGet.mockResolvedValueOnce({
+      data: [
+        { id: 5, student_id: 6, private_lesson_id: 10, status: 'pending' },
+      ],
+    });
+
+    const { default: ClasesTutor } = await import('../ClasesTutor');
+    render(<ClasesTutor />);
+
+    await waitFor(async () => {
+      const coincidencias = await screen.findAllByText((_, el) =>
+        el?.textContent?.includes('ID Clase: 10')
+      );
+      expect(coincidencias.length).toBeGreaterThan(0);
+    });
   });
 
-  it('renderiza el título y botones de navegación', () => {
-    render(<ClasesTutor />, { wrapper: MemoryRouter });
+  it('permite aceptar una solicitud', async () => {
+    mockGet.mockResolvedValueOnce({
+      data: [
+        { id: 5, student_id: 6, private_lesson_id: 10, status: 'pending' },
+      ],
+    });
 
-    expect(screen.getByText(/Solicitudes de clase/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ver perfil/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cerrar sesión/i)).toBeInTheDocument();
+    const { default: ClasesTutor } = await import('../ClasesTutor');
+    render(<ClasesTutor />);
+
+    const btn = await screen.findByText('Aceptar');
+    fireEvent.click(btn);
+
+    await waitFor(() =>
+      expect(mockPut).toHaveBeenCalledWith(
+        '/reservations/5',
+        { status: 'accepted' },
+        { headers: { Authorization: 'Bearer mock-token' } }
+      )
+    );
   });
 
-  it('muestra las solicitudes de clases con botones de acción', () => {
-    render(<ClasesTutor />, { wrapper: MemoryRouter });
+  it('permite rechazar una solicitud', async () => {
+    mockGet.mockResolvedValueOnce({
+      data: [
+        { id: 5, student_id: 6, private_lesson_id: 10, status: 'pending' },
+      ],
+    });
 
-    expect(screen.getByText(/Matemáticas I/i)).toBeInTheDocument();
-    expect(screen.getByText(/Física II/i)).toBeInTheDocument();
+    const { default: ClasesTutor } = await import('../ClasesTutor');
+    render(<ClasesTutor />);
 
-    expect(screen.getAllByText(/Aceptar/i).length).toBe(2);
-    expect(screen.getAllByText(/Rechazar/i).length).toBe(2);
-  });
+    const btn = await screen.findByText('Rechazar');
+    fireEvent.click(btn);
 
-  it('permite aceptar o rechazar una solicitud', () => {
-    render(<ClasesTutor />, { wrapper: MemoryRouter });
-
-    fireEvent.click(screen.getAllByText(/Aceptar/i)[0]);
-    expect(console.log).toHaveBeenCalledWith('Solicitud 1 aceptada');
-
-    fireEvent.click(screen.getAllByText(/Rechazar/i)[1]);
-    expect(console.log).toHaveBeenCalledWith('Solicitud 2 rechazada');
+    await waitFor(() =>
+      expect(mockPut).toHaveBeenCalledWith(
+        '/reservations/5',
+        { status: 'rejected' },
+        { headers: { Authorization: 'Bearer mock-token' } }
+      )
+    );
   });
 });
