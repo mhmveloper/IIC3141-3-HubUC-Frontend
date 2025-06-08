@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Clases from '../Clases';
 
@@ -10,6 +10,7 @@ const mockLessons = [
     tutor_id: 456,
     price: 10000,
     start_time: '2025-06-09T03:56:28.602574',
+    description: 'Clase de prueba 1',
   },
   {
     id: 2,
@@ -17,6 +18,7 @@ const mockLessons = [
     tutor_id: 654,
     price: 20000,
     start_time: '2025-06-10T18:00:00.000000',
+    description: 'Clase de prueba 2',
   },
 ];
 
@@ -25,10 +27,12 @@ describe('Clases (unit test)', () => {
     vi.restoreAllMocks();
   });
 
-  it('renderiza correctamente una lista de clases', () => {
+  it('renderiza correctamente una lista de clases con datos enriquecidos', () => {
     render(
       <MemoryRouter>
-        <Clases initialLessons={mockLessons} />
+        <Clases
+          initialLessons={mockLessons}
+        />
       </MemoryRouter>
     );
 
@@ -40,17 +44,24 @@ describe('Clases (unit test)', () => {
     expect(buttons).toHaveLength(2);
   });
 
-  it('llama a console.log al hacer click en "Solicitar clase"', () => {
-    const consoleSpy = vi.spyOn(console, 'log');
+  it('muestra el modal al hacer clic en "Solicitar clase"', async () => {
     render(
       <MemoryRouter>
-        <Clases initialLessons={mockLessons} />
+        <Clases
+          initialLessons={mockLessons}
+        />
       </MemoryRouter>
     );
 
     fireEvent.click(screen.getAllByText('Solicitar clase')[0]);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Clase privada 1 solicitada');
+    await waitFor(() => {
+      expect(screen.getByText('Confirmar solicitud')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/¿Estás seguro de que deseas solicitar/)).toBeInTheDocument();
+    expect(screen.getByText('Cancelar')).toBeInTheDocument();
+    expect(screen.getByText('Confirmar')).toBeInTheDocument();
   });
 
   it('muestra mensaje de carga si no hay initialLessons', () => {
@@ -73,10 +84,10 @@ describe('Clases (unit test)', () => {
     const inputCurso = screen.getByPlaceholderText('Nombre de curso');
     const inputTutor = screen.getByPlaceholderText('Nombre del tutor');
 
-    fireEvent.change(inputCurso, { target: { value: '123' } });
+    fireEvent.change(inputCurso, { target: { value: 'álgebra' } });
     fireEvent.change(inputTutor, { target: { value: 'Carlos' } });
 
-    expect(inputCurso.value).toBe('123');
+    expect(inputCurso.value).toBe('álgebra');
     expect(inputTutor.value).toBe('Carlos');
   });
 });
