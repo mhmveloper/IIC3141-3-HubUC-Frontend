@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import AlumnoLogin from '../AlumnoLogin'
-import * as apiModule from '../../services/api'
+import * as apiModule from '../../../services/api'
 import { BrowserRouter } from 'react-router-dom'
 
-vi.mock('../../services/api', () => ({
+vi.mock('../../../services/api', () => ({
   default: {
     post: vi.fn()
   }

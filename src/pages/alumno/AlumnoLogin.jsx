@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
-
-export default function TutorLogin() {
+export default function AlumnoLogin() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'tutor',
+    role: 'student',
   });
   const [message, setMessage] = useState(null);
 
@@ -39,13 +38,13 @@ export default function TutorLogin() {
 
       if (token) {
         localStorage.setItem('token', token);
-        localStorage.setItem('role', 'tutor');
+        localStorage.setItem('role', 'student');
 
       }
 
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
       if (isLogin) {
-        navigate('/solicitudes');
+        navigate('/clases');
       }
     } catch (err) {
       const detail = err.response?.data?.detail || 'Error inesperado';
@@ -60,7 +59,7 @@ export default function TutorLogin() {
         className="bg-neutral-800 p-6 rounded-xl flex flex-col gap-4 w-full max-w-sm"
       >
         <h2 className="text-xl font-semibold text-center mb-2">
-          {isLogin ? 'Ingreso Tutor' : 'Registro Tutor'}
+          {isLogin ? 'Ingreso Alumno' : 'Registro Alumno'}
         </h2>
 
         {!isLogin && (
@@ -96,7 +95,7 @@ export default function TutorLogin() {
         />
 
         {!isLogin && (
-          <input type="hidden" name="role" value="tutor" />
+          <input type="hidden" name="role" value="student" />
         )}
 
         <button

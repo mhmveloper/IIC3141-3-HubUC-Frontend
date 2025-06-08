@@ -13,14 +13,14 @@ vi.mock('react-router-dom', async () => {
 });
 
 // 2. Mock de PublicarClase
-vi.mock('../../components/tutor/PublicarClase', () => ({
+vi.mock('../../../components/tutor/PublicarClase', () => ({
   default: () => <div>PublicarClaseMock</div>,
 }));
 
 // 3. Mock de la API
 const mockGet = vi.fn();
 const mockPut = vi.fn();
-vi.mock('../../services/api', () => ({
+vi.mock('../../../services/api', () => ({
   default: {
     get: mockGet,
     put: mockPut,

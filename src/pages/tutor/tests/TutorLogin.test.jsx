@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import TutorLogin from '../TutorLogin'
-import * as apiModule from '../../services/api'
+import * as apiModule from '../../../services/api'
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -13,7 +13,7 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-vi.mock('../../services/api')
+vi.mock('../../../services/api')
 
 describe('TutorLogin', () => {
   beforeEach(() => {

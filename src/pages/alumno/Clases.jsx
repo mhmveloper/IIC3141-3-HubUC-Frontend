@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../services/api';
+import axios from '../../services/api';
 
 export default function Clases({ initialLessons = null }) {
   const navigate = useNavigate();
