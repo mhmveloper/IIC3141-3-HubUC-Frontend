@@ -11,6 +11,8 @@ import TutorDashboard from "./pages/tutor/TutorDashboard";
 import ClasesTutor from "./pages/tutor/ClasesTutor";
 import Horarios from "./pages/tutor/HorariosTutor";
 import NuevoHorario from "./pages/tutor/NuevoHorario";
+import MisClases from "./pages/tutor/MisClases"; 
+
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ export const router = createBrowserRouter([
       { path: "solicitudes", element: <ClasesTutor /> },
       { path: "horarios", element: <Horarios /> },
       { path: "horarios/nuevo", element: <NuevoHorario /> },
+      { path: 'mis-clases', element: <MisClases /> },
+
     ],
   },
 ]);

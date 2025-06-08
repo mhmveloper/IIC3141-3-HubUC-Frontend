@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
+
+const WEEKDAYS = {
+  Lunes: 'Monday',
+  Martes: 'Tuesday',
+  Miércoles: 'Wednesday',
+  Jueves: 'Thursday',
+  Viernes: 'Friday',
+  Sábado: 'Saturday',
+  Domingo: 'Sunday',
+};
 
 export default function CrearHorario() {
   const navigate = useNavigate();
@@ -16,7 +27,7 @@ export default function CrearHorario() {
     }
     setBlocks([
       ...blocks,
-      { weekday, start_hour: start, end_hour: end }
+      { weekday, start_hour: start, end_hour: end },
     ]);
   };
 
@@ -27,17 +38,36 @@ export default function CrearHorario() {
   };
 
   const handleSubmit = async (e) => {
+    const toNaiveDateTime = (dateStr) => {
+      return new Date(dateStr).toISOString().split('.')[0]; // Quita zona horaria y milisegundos
+    };
     e.preventDefault();
-    const payload = blocks.map((block) => ({
-      ...block,
-      valid_from: validFrom,
-      valid_until: validUntil,
-    }));
 
-    console.log('Payload a enviar:', payload);
+    const valid_from_naive = toNaiveDateTime(validFrom);
+    const valid_until_naive = toNaiveDateTime(validUntil);
+    const token = localStorage.getItem('token');
 
-    // await api.post('/timeblocks', payload, { headers: { Authorization: `Bearer ${token}` } });
-    navigate('/horarios');
+    try {
+      for (const block of blocks) {
+        const payload = {
+          weekday: WEEKDAYS[block.weekday],
+          start_hour: block.start_hour,
+          end_hour: block.end_hour,
+          valid_from: valid_from_naive,
+          valid_until: valid_until_naive,
+        };
+
+        console.log('Enviando:', payload);
+        await api.post('/weekly-timeblocks', payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+
+      navigate('/horarios');
+    } catch (err) {
+      console.error('Error al crear horarios:', err);
+      alert('Ocurrió un error al crear los horarios.');
+    }
   };
 
   return (
@@ -52,7 +82,7 @@ export default function CrearHorario() {
             onChange={(e) => setWeekday(e.target.value)}
             className="bg-neutral-800 p-2 rounded mt-1"
           >
-            {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((d) => (
+            {Object.keys(WEEKDAYS).map((d) => (
               <option key={d} value={d}>
                 {d}
               </option>

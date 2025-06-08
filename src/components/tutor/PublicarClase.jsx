@@ -44,7 +44,7 @@ export default function PublicarClase() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/clases', {
+      await api.post('/private-lessons', {
         id_ramo: parseInt(ramo, 10),
         horario: horarios,
         precio: parseFloat(precio),
@@ -116,7 +116,7 @@ export default function PublicarClase() {
               type="number"
               value={precio}
               onChange={(e) => setPrecio(e.target.value)}
-              placeholder="Ej: 15000"
+              placeholder="$ CLP"
               className="p-2 rounded w-full bg-neutral-900 text-white border border-neutral-600"
               required
             />

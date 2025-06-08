@@ -37,8 +37,9 @@ export default function TutorLogin() {
       const token = res.data.access_token;
 
       if (token) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", "tutor");
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+
       }
 
       setMessage(`✅ ${isLogin ? "Ingreso" : "Registro"} exitoso`);
