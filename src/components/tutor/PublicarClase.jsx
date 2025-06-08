@@ -44,7 +44,7 @@ export default function PublicarClase() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/clases', {
+      await api.post('/private-lessons', {
         id_ramo: parseInt(ramo, 10),
         horario: horarios,
         precio: parseFloat(precio),

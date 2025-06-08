@@ -1,28 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api'; // Ajusta según tu estructura de carpetas
 
 export default function Horarios() {
   const navigate = useNavigate();
+  const [horarios, setHorarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const diasSemana = {
+  Monday: 'Lunes',
+  Tuesday: 'Martes',
+  Wednesday: 'Miércoles',
+  Thursday: 'Jueves',
+  Friday: 'Viernes',
+  Saturday: 'Sábado',
+  Sunday: 'Domingo',
+};
 
-  // Datos hardcodeados por ahora
-  const horarios = [
-    {
-      id: 1,
-      weekday: 'Lunes',
-      start_hour: 10,
-      end_hour: 12,
-      valid_from: '2024-06-10',
-      valid_until: '2024-07-01',
-    },
-    {
-      id: 2,
-      weekday: 'Miércoles',
-      start_hour: 14,
-      end_hour: 16,
-      valid_from: '2024-06-10',
-      valid_until: '2024-07-01',
-    },
-  ];
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const fetchHorarios = async () => {
+      try {
+        const res = await api.get(`/weekly-timeblocks/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setHorarios(res.data);
+      } catch (err) {
+        console.error('Error al obtener horarios:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHorarios();
+  }, [user.id, token]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
@@ -44,7 +59,9 @@ export default function Horarios() {
         </div>
       </div>
 
-      {horarios.length === 0 ? (
+      {loading ? (
+        <p className="text-neutral-400">Cargando horarios...</p>
+      ) : horarios.length === 0 ? (
         <p className="text-neutral-400">No tienes horarios publicados.</p>
       ) : (
         <div className="flex flex-col gap-4">
@@ -54,21 +71,20 @@ export default function Horarios() {
               className="bg-neutral-800 p-4 rounded-lg border border-neutral-700"
             >
               <div className="font-semibold text-lg">
-                {h.weekday} de {h.start_hour}:00 a {h.end_hour}:00
+                {diasSemana[h.weekday] || h.weekday} de {h.start_hour}:00 a {h.end_hour}:00
               </div>
               <div className="text-sm text-neutral-400">
-                Vigente desde {h.valid_from} hasta {h.valid_until}
+                Vigente desde {new Date(h.valid_from).toLocaleDateString()} hasta{' '}
+                {new Date(h.valid_until).toLocaleDateString()}
               </div>
               <div className="mt-2 flex gap-2">
-                <button className="bg-violet-500 hover:bg-violet-700 px-3 py-1 rounded text-sm">
-                  Editar
-                </button>
                 <button className="bg-red-600 hover:bg-red-800 px-3 py-1 rounded text-sm">
                   Eliminar
                 </button>
               </div>
             </div>
           ))}
+
         </div>
       )}
     </div>

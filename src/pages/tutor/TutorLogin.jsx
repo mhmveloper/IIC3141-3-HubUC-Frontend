@@ -39,8 +39,7 @@ export default function TutorLogin() {
 
       if (token) {
         localStorage.setItem('token', token);
-        localStorage.setItem('role', 'tutor');
-
+        localStorage.setItem('user', JSON.stringify(res.data.user));
       }
 
       setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
