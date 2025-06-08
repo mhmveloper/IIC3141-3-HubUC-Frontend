@@ -1,8 +1,12 @@
-import React from 'react';
+// src/components/Clases.jsx
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from '../services/api';
 
-export default function Clases() {
+export default function Clases({ initialLessons = null }) {
   const navigate = useNavigate();
+  const [lessons, setLessons] = useState(initialLessons || []);
+  const [loading, setLoading] = useState(initialLessons ? false : true);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -10,8 +14,25 @@ export default function Clases() {
   };
 
   const handleSolicitarClase = (id) => {
-    console.log(`Clase ${id} solicitada`);
+    console.log(`Clase privada ${id} solicitada`);
   };
+
+  useEffect(() => {
+    if (initialLessons) return;
+
+    const fetchPrivateLessons = async () => {
+      try {
+        const response = await axios.get('/private-lessons');
+        setLessons(response.data);
+      } catch (error) {
+        console.error('Error cargando clases privadas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrivateLessons();
+  }, [initialLessons]);
 
   return (
     <div className="bg-neutral-950 min-h-screen text-white p-8">
@@ -33,26 +54,39 @@ export default function Clases() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        {[1, 2, 3].map((id) => (
-          <div
-            key={id}
-            className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-all duration-200 flex justify-between items-center"
-          >
-            <div>
-              <div className="text-lg font-semibold">Asignatura {id}</div>
-              <div className="text-sm text-neutral-400">Profesor Ejemplo</div>
-            </div>
-
-            <button
-              onClick={() => handleSolicitarClase(id)}
-              className="bg-violet-600 hover:bg-violet-800 px-4 py-2 text-sm rounded"
+      {loading ? (
+        <p className="text-center text-neutral-400">Cargando clases...</p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {lessons.map((lesson) => (
+            <div
+              key={lesson.id}
+              className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-all duration-200 flex justify-between items-center"
             >
-              Solicitar clase
-            </button>
-          </div>
-        ))}
-      </div>
+              <div>
+                <div className="text-lg font-semibold">Curso ID: {lesson.course_id}</div>
+                <div className="text-sm text-neutral-400">Tutor ID: {lesson.tutor_id}</div>
+                <div className="text-sm text-neutral-400">Precio: ${lesson.price}</div>
+                <div className="text-sm text-neutral-400">
+                  Fecha:{' '}
+                  {new Date(lesson.start_time).toLocaleString('es-CL', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                    timeZone: 'America/Santiago',
+                  })}
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleSolicitarClase(lesson.id)}
+                className="bg-violet-600 hover:bg-violet-800 px-4 py-2 text-sm rounded"
+              >
+                Solicitar clase
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
