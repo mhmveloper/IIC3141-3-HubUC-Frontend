@@ -11,6 +11,7 @@ import Perfil from "./pages/common/Perfil";
 import TutorDashboard from "./pages/tutor/TutorDashboard";
 import AlumnoDashboard from "./pages/alumno/AlumnoDashboard";
 import ClasesTutor from "./pages/tutor/ClasesTutor";
+import AlumnoSolicitudes from "./pages/alumno/AlumnoSolicitudes";
 import Horarios from "./pages/tutor/HorariosTutor";
 import NuevoHorario from "./pages/tutor/NuevoHorario";
 import MisClases from "./pages/tutor/MisClases";
@@ -34,7 +35,8 @@ export const router = createBrowserRouter([
       { path: "perfil", element: <Perfil /> },
       { path: "dashboard/tutor", element: <TutorDashboard /> },
       { path: "dashboard/alumno", element: <AlumnoDashboard /> },
-      { path: "solicitudes", element: <ClasesTutor /> },
+      { path: "solicitudes/tutor", element: <ClasesTutor /> },
+      { path: "solicitudes/alumno", element: <AlumnoSolicitudes /> },
       { path: "horarios", element: <Horarios /> },
       { path: "horarios/nuevo", element: <NuevoHorario /> },
       { path: "mis-clases", element: <MisClases /> },
