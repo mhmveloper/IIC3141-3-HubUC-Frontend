@@ -16,7 +16,7 @@ export default function Navbar() {
     navigate("/");
   };
 
-  const handleLogoClick = () => {
+  const handleClick = () => {
     if (user.role === "tutor") {
       navigate("/dashboard/tutor");
     } else {
@@ -29,7 +29,7 @@ export default function Navbar() {
       <div className="flex items-center gap-4">
         <div
           className="text-2xl font-bold cursor-pointer"
-          onClick={() => handleLogoClick()}
+          onClick={() => handleClick()}
         >
           TutorUC
         </div>
@@ -37,6 +37,13 @@ export default function Navbar() {
       </div>
 
       <div className="flex gap-4 items-center">
+        <button
+          onClick={handleClick}
+          className="hover:text-violet-400 transition duration-200"
+        >
+          Panel Principal
+        </button>
+
         <Link
           to="/perfil"
           className="hover:text-violet-400 transition duration-200"
