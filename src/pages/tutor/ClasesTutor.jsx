@@ -1,60 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PublicarClase from '../../components/tutor/PublicarClase';
-import api from '../../services/api';
+import React, { useEffect, useState } from "react";
+import PublicarClase from "../../components/tutor/PublicarClase";
+import api from "../../services/api";
 
 export default function ClasesTutor() {
-  const navigate = useNavigate();
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-const handleAceptar = async (id) => {
-  try {
-    const token = localStorage.getItem('token');
-    await api.put(`/reservations/${id}`, { status: 'accepted' }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // Opcional: actualiza la lista de solicitudes tras aceptar
-    setSolicitudes(prev => prev.filter(s => s.id !== id));
-  } catch (error) {
-    console.error(`Error al aceptar solicitud ${id}:`, error);
-  }
-};
+  const handleAceptar = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await api.put(
+        `/reservations/${id}`,
+        { status: "accepted" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Opcional: actualiza la lista de solicitudes tras aceptar
+      setSolicitudes((prev) => prev.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error(`Error al aceptar solicitud ${id}:`, error);
+    }
+  };
 
-const handleRechazar = async (id) => {
-  try {
-    const token = localStorage.getItem('token');
-    await api.put(`/reservations/${id}`, { status: 'rejected' }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // Opcional: actualiza la lista de solicitudes tras rechazar
-    setSolicitudes(prev => prev.filter(s => s.id !== id));
-  } catch (error) {
-    console.error(`Error al rechazar solicitud ${id}:`, error);
-  }
-};
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+  const handleRechazar = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await api.put(
+        `/reservations/${id}`,
+        { status: "rejected" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Opcional: actualiza la lista de solicitudes tras rechazar
+      setSolicitudes((prev) => prev.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error(`Error al rechazar solicitud ${id}:`, error);
+    }
   };
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await api.get('/reservations/tutor', {
+        const token = localStorage.getItem("token");
+        const res = await api.get("/reservations/tutor", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setSolicitudes(res.data);
       } catch (error) {
-        console.error('Error al obtener solicitudes:', error);
+        console.error("Error al obtener solicitudes:", error);
       } finally {
         setLoading(false);
       }
@@ -67,20 +68,6 @@ const handleRechazar = async (id) => {
     <div className="bg-neutral-950 min-h-screen text-white p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Solicitudes de clase</h1>
-        <div className="flex gap-4">
-          <button
-            onClick={() => navigate('/perfil')}
-            className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200"
-          >
-            Ver perfil
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-violet-50 text-violet-600 hover:bg-red-400 hover:text-violet-50 px-4 py-2 rounded duration-200"
-          >
-            Cerrar sesión
-          </button>
-        </div>
       </div>
 
       <PublicarClase />
@@ -97,9 +84,15 @@ const handleRechazar = async (id) => {
               className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 flex justify-between items-center"
             >
               <div>
-                <div className="text-lg font-semibold">ID Clase: {s.private_lesson_id}</div>
-                <div className="text-sm text-neutral-400">ID Estudiante: {s.student_id}</div>
-                <div className="text-sm text-neutral-500">Estado: {s.status}</div>
+                <div className="text-lg font-semibold">
+                  ID Clase: {s.private_lesson_id}
+                </div>
+                <div className="text-sm text-neutral-400">
+                  ID Estudiante: {s.student_id}
+                </div>
+                <div className="text-sm text-neutral-500">
+                  Estado: {s.status}
+                </div>
               </div>
 
               <div className="flex gap-2">
