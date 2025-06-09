@@ -3,33 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
+  };
+
+  const handleLogoClick = () => {
+    if (user.role === "tutor") {
+      navigate("/dashboard/tutor");
+    } else {
+      navigate("/clases");
+    }
   };
 
   return (
     <nav className="bg-neutral-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div
         className="text-2xl font-bold cursor-pointer"
-        onClick={() => navigate("/")}
+        onClick={() => handleLogoClick()}
       >
         TutorUC
       </div>
 
       <div className="flex gap-4 items-center">
-        <Link
-          to="/dashboard/tutor"
-          className="hover:text-violet-400 transition duration-200"
-        >
-          Dashboard
-        </Link>
-        <Link
-          to="/solicitudes"
-          className="hover:text-violet-400 transition duration-200"
-        >
-          Solicitudes
-        </Link>
         <Link
           to="/perfil"
           className="hover:text-violet-400 transition duration-200"
