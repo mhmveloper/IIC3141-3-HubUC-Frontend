@@ -78,8 +78,6 @@ export default function ClasesTutor() {
         </button>
       </div>
 
-      <PublicarClase />
-
       {loading ? (
         <p className="mt-6 text-neutral-300">Cargando solicitudes...</p>
       ) : solicitudes.length === 0 ? (

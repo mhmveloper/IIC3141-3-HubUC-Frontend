@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
-export default function PublicarClase() {
+export default function PublicarClase({ onPublicar }) {
   /* ──────────────── State ──────────────── */
   const [ramo, setRamo] = useState('');
   const [horarios, setHorarios] = useState([]);          // ← sin <string[]>
@@ -67,6 +67,7 @@ export default function PublicarClase() {
       setHorarios([]);
       setPrecio('');
       setDescripcion('');
+      if (onPublicar) onPublicar();
     } catch (err) {
       console.error(err);
       setMensaje('❌ Error al publicar la clase');
