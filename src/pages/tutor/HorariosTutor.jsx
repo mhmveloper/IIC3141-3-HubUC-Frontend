@@ -51,10 +51,10 @@ export default function Horarios() {
             + Crear nuevo horario
           </button>
           <button
-            onClick={() => navigate('/solicitudes')}
+            onClick={() => navigate('/dashboard/tutor')}
             className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
           >
-            ← Volver a solicitudes
+            ← Volver al dashboard
           </button>
         </div>
       </div>
