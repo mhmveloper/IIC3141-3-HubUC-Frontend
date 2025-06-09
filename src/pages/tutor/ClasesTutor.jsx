@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PublicarClase from "../../components/tutor/PublicarClase";
 import api from "../../services/api";
 
 export default function ClasesTutor() {
@@ -69,8 +68,6 @@ export default function ClasesTutor() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Solicitudes de clase</h1>
       </div>
-
-      <PublicarClase />
 
       {loading ? (
         <p className="mt-6 text-neutral-300">Cargando solicitudes...</p>

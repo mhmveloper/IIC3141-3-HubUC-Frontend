@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import PublicarClase from "../../components/tutor/PublicarClase";
 
 export default function MisClases() {
   const navigate = useNavigate();
@@ -64,14 +65,6 @@ export default function MisClases() {
     });
   }, [clases]);
 
-  const handleChange = (e) => {
-    setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSearch = () => {
-    fetchClases();
-  };
-
   const handleEliminar = async (id) => {
     const confirmar = confirm('¿Estás seguro de eliminar esta clase?');
     if (!confirmar) return;
@@ -89,25 +82,9 @@ export default function MisClases() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
-      <div className="bg-neutral-900 p-4 rounded-lg mb-6 flex flex-wrap gap-4">
-        <label htmlFor="course_id" className="text-sm text-neutral-300">
-        </label>
-        <input
-          id="course_id"
-          name="course_id"
-          type="number"
-          placeholder="ID Curso"
-          className="bg-neutral-800 text-white px-3 py-2 rounded"
-          value={filters.course_id}
-          onChange={handleChange}
-        />
-        <button
-          onClick={handleSearch}
-          className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded text-sm"
-        >
-          Buscar
-        </button>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Mis  Clases</h1>
+
+      <PublicarClase onPublicar={fetchClases}/>
 
       {loading ? (
         <p className="text-neutral-400">Cargando clases...</p>
@@ -151,7 +128,7 @@ export default function MisClases() {
         onClick={() => navigate('/dashboard/tutor')}
         className="mt-8 bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded"
       >
-        ← Volver al dashboard
+        ← Volver al panel principal
       </button>
     </div>
   );
