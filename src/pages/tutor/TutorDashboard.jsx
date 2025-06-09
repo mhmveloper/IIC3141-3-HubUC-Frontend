@@ -89,7 +89,7 @@ export default function TutorDashboard() {
               <p className="mt-6 text-neutral-400">No hay solicitudes aún.</p>
             ) : (
               <Link
-                to="/solicitudes"
+                to="/solicitudes/tutor"
                 className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
               >
                 Ver solicitudes
