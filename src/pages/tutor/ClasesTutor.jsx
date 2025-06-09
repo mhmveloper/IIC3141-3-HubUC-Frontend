@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PublicarClase from "../../components/tutor/PublicarClase";
 import api from "../../services/api";
 
 export default function ClasesTutor() {
@@ -11,17 +10,12 @@ export default function ClasesTutor() {
   const handleAceptar = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await api.put(
-        `/reservations/${id}`,
-        { status: "accepted" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await api.put(`/reservations/${id}`, { status: "accepted" }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSolicitudes((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status: "accepted" } : s))
       );
-      // Opcional: actualiza la lista de solicitudes tras aceptar
-      setSolicitudes((prev) => prev.filter((s) => s.id !== id));
     } catch (error) {
       console.error(`Error al aceptar solicitud ${id}:`, error);
     }
@@ -30,17 +24,10 @@ export default function ClasesTutor() {
   const handleRechazar = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await api.put(
-        `/reservations/${id}`,
-        { status: "rejected" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // Opcional: actualiza la lista de solicitudes tras rechazar
-      setSolicitudes((prev) => prev.filter((s) => s.id !== id));
+      await api.put(`/reservations/${id}`, { status: "rejected" }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSolicitudes((prev) => prev.map((s) => (s.id === id ? { ...s, status: "rejected" } : s)));
     } catch (error) {
       console.error(`Error al rechazar solicitud ${id}:`, error);
     }
@@ -51,9 +38,7 @@ export default function ClasesTutor() {
       try {
         const token = localStorage.getItem("token");
         const res = await api.get("/reservations/tutor", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setSolicitudes(res.data);
       } catch (error) {
@@ -65,6 +50,10 @@ export default function ClasesTutor() {
 
     fetchSolicitudes();
   }, []);
+
+  const pendientes = solicitudes.filter((s) => s.status === "pending");
+  const aceptadas = solicitudes.filter((s) => s.status === "accepted");
+  const rechazadas = solicitudes.filter((s) => s.status === "rejected");
 
   return (
     <div className="bg-neutral-950 min-h-screen text-white p-8">
@@ -80,44 +69,95 @@ export default function ClasesTutor() {
 
       {loading ? (
         <p className="mt-6 text-neutral-300">Cargando solicitudes...</p>
-      ) : solicitudes.length === 0 ? (
-        <p className="mt-6 text-neutral-400">No hay solicitudes aún.</p>
+      ) : pendientes.length === 0 && aceptadas.length === 0 ? (
+        <p className="mt-6 text-neutral-400">No hay solicitudes disponibles.</p>
       ) : (
-        <div className="flex flex-col gap-4 mt-6">
-          {solicitudes.map((s) => (
-            <div
-              key={s.id}
-              className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 flex justify-between items-center"
-            >
-              <div>
-                <div className="text-lg font-semibold">
-                  ID Clase: {s.private_lesson_id}
-                </div>
-                <div className="text-sm text-neutral-400">
-                  ID Estudiante: {s.student_id}
-                </div>
-                <div className="text-sm text-neutral-500">
-                  Estado: {s.status}
-                </div>
-              </div>
+        <>
+          {pendientes.length > 0 && (
+            <>
+              <h2 className="text-xl font-semibold mb-2">Pendientes</h2>
+              <div className="flex flex-col gap-4 mb-6">
+                {pendientes.map((s) => (
+                  <div
+                    key={s.id}
+                    className="bg-neutral-800 p-4 rounded-lg border border-neutral-700 flex justify-between items-center"
+                  >
+                    <div>
+                      <div className="text-lg font-semibold">
+                        Clase: {s.private_lesson.course.name}
+                      </div>
+                      <div className="text-sm text-neutral-400">
+                        Nombre Estudiante: {s.student.name}
+                      </div>
+                      <div className="text-sm text-neutral-500">
+                        Estado: Pendiente
+                      </div>
+                    </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleAceptar(s.id)}
-                  className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200"
-                >
-                  Aceptar
-                </button>
-                <button
-                  onClick={() => handleRechazar(s.id)}
-                  className="bg-violet-50 text-violet-600 hover:bg-red-400 hover:text-violet-50 px-4 py-2 rounded duration-200"
-                >
-                  Rechazar
-                </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleAceptar(s.id)}
+                        className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200"
+                      >
+                        Aceptar
+                      </button>
+                      <button
+                        onClick={() => handleRechazar(s.id)}
+                        className="bg-violet-50 text-violet-600 hover:bg-red-400 hover:text-violet-50 px-4 py-2 rounded duration-200"
+                      >
+                        Rechazar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {aceptadas.length > 0 && (
+            <div className="flex flex-col gap-4 mb-6">
+              <h2 className="text-xl font-semibold">Aceptadas</h2>
+              <div className="flex flex-col gap-4">
+                {aceptadas.map((s) => (
+                  <div
+                    key={s.id}
+                    className="bg-neutral-800 p-4 rounded-lg border border-neutral-700"
+                  >
+                    <div className="text-lg font-semibold">
+                      Clase: {s.private_lesson.course.name}
+                    </div>
+                    <div className="text-sm text-neutral-400">
+                      Nombre Estudiante: {s.student.name}
+                    </div>
+                    <div className="text-sm text-green-500">Estado: Aceptada</div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+          )}
+
+          {rechazadas.length > 0 && (
+            <>
+              <h2 className="text-xl font-semibold mb-2">Rechazadas</h2>
+              <div className="flex flex-col gap-4">
+                {rechazadas.map((s) => (
+                  <div
+                    key={s.id}
+                    className="bg-neutral-800 p-4 rounded-lg border border-neutral-700"
+                  >
+                    <div className="text-lg font-semibold">
+                      Clase: {s.private_lesson.course.name}
+                    </div>
+                    <div className="text-sm text-neutral-400">
+                      Nombre Estudiante: {s.student.name}
+                    </div>
+                    <div className="text-sm text-red-500">Estado: Rechazada</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );
