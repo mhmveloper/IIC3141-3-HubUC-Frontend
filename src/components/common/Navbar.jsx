@@ -4,6 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Navbar() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
+  const role =
+    user.role === "tutor"
+      ? "Tutor"
+      : user.role === "student"
+      ? "Alumno"
+      : "Invitado";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -14,17 +20,20 @@ export default function Navbar() {
     if (user.role === "tutor") {
       navigate("/dashboard/tutor");
     } else {
-      navigate("/clases");
+      navigate("/dashboard/alumno");
     }
   };
 
   return (
     <nav className="bg-neutral-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
-      <div
-        className="text-2xl font-bold cursor-pointer"
-        onClick={() => handleLogoClick()}
-      >
-        TutorUC
+      <div className="flex items-center gap-4">
+        <div
+          className="text-2xl font-bold cursor-pointer"
+          onClick={() => handleLogoClick()}
+        >
+          TutorUC
+        </div>
+        <div className="text-xl">{role}</div>
       </div>
 
       <div className="flex gap-4 items-center">
