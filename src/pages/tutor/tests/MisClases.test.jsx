@@ -27,16 +27,25 @@ describe('MisClases', () => {
   });
 
   it('muestra clases cargadas correctamente', async () => {
-    api.get.mockResolvedValueOnce({
-      data: [
-        {
-          id: 1,
-          subject: 'Álgebra',
-          description: 'Ecuaciones y matrices',
-          modality: 'online',
-          price: 10000,
-        },
-      ],
+    api.get.mockImplementation((url) => {
+      if (url.startsWith('/private-lessons/search')) {
+        return Promise.resolve({
+          data: {
+            results: [
+              {
+                id: 1,
+                course_id: 1,
+                description: 'Ecuaciones y matrices',
+                price: 10000,
+              },
+            ],
+          },
+        });
+      }
+      if (url === '/courses/1') {
+        return Promise.resolve({ data: { id: 1, name: 'Álgebra' } });
+      }
+      return Promise.resolve({ data: {} });
     });
 
     render(
@@ -54,7 +63,7 @@ describe('MisClases', () => {
   });
 
   it('muestra mensaje cuando no hay clases', async () => {
-    api.get.mockResolvedValueOnce({ data: [] });
+    api.get.mockResolvedValueOnce({ data: { results: [] } });
 
     render(
       <MemoryRouter>
@@ -70,7 +79,7 @@ describe('MisClases', () => {
   });
 
   it('permite aplicar filtro y ejecutar búsqueda', async () => {
-    api.get.mockResolvedValue({ data: [] });
+    api.get.mockResolvedValue({ data: { results: [] } });
 
     render(
       <MemoryRouter>
@@ -93,16 +102,25 @@ describe('MisClases', () => {
   });
 
   it('permite navegar al editar una clase', async () => {
-    api.get.mockResolvedValueOnce({
-      data: [
-        {
-          id: 1,
-          subject: 'Física',
-          description: 'Clases de dinámica',
-          modality: 'presencial',
-          price: 12000,
-        },
-      ],
+    api.get.mockImplementation((url) => {
+      if (url.startsWith('/private-lessons/search')) {
+        return Promise.resolve({
+          data: {
+            results: [
+              {
+                id: 1,
+                course_id: 1,
+                description: 'Clases de dinámica',
+                price: 12000,
+              },
+            ],
+          },
+        });
+      }
+      if (url === '/courses/1') {
+        return Promise.resolve({ data: { id: 1, name: 'Física' } });
+      }
+      return Promise.resolve({ data: {} });
     });
 
     render(
@@ -120,16 +138,25 @@ describe('MisClases', () => {
   it('permite eliminar una clase con confirmación', async () => {
     vi.spyOn(window, 'confirm').mockReturnValueOnce(true);
 
-    api.get.mockResolvedValueOnce({
-      data: [
-        {
-          id: 2,
-          subject: 'Química',
-          description: 'Reacciones y estequiometría',
-          modality: 'online',
-          price: 14000,
-        },
-      ],
+    api.get.mockImplementation((url) => {
+      if (url.startsWith('/private-lessons/search')) {
+        return Promise.resolve({
+          data: {
+            results: [
+              {
+                id: 2,
+                course_id: 1,
+                description: 'Reacciones y estequiometría',
+                price: 14000,
+              },
+            ],
+          },
+        });
+      }
+      if (url === '/courses/1') {
+        return Promise.resolve({ data: { id: 1, name: 'Química' } });
+      }
+      return Promise.resolve({ data: {} });
     });
 
     api.delete.mockResolvedValueOnce({});

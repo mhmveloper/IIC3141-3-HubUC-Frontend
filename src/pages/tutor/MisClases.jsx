@@ -6,11 +6,22 @@ export default function MisClases() {
   const navigate = useNavigate();
   const [clases, setClases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [CursosCache, setCursosCache] = useState({});
   const user = JSON.parse(localStorage.getItem('user'));
 
   const [filters, setFilters] = useState({
     course_id: '',
   });
+
+  const fetchCurso = async (courseId) => {
+    if (CursosCache[courseId]) return; // evitar fetch duplicado
+    try {
+      const res = await api.get(`/courses/${courseId}`);
+      setCursosCache((prev) => ({ ...prev, [courseId]: res.data }));
+    } catch (e) {
+      console.error(`Error cargando curso ${courseId}:`, e);
+    }
+  };
 
   const fetchClases = async () => {
     setLoading(true);
@@ -24,11 +35,14 @@ export default function MisClases() {
         page: '1',
         page_size: '10',
       });
+
       const token = localStorage.getItem('token');
       const res = await api.get(`/private-lessons/search?${query.toString()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setClases(Array.isArray(res.data) ? res.data : res.data.items || []);
+
+      const clasesObtenidas = res.data?.results || [];
+      setClases(clasesObtenidas);
 
     } catch (err) {
       console.error('Error al obtener clases:', err);
@@ -40,6 +54,15 @@ export default function MisClases() {
   useEffect(() => {
     fetchClases();
   }, []);
+
+  useEffect(() => {
+    const uniqueCourseIds = [...new Set(clases.map(c => c.course_id))];
+    uniqueCourseIds.forEach((id) => {
+      if (!CursosCache[id]) {
+        fetchCurso(id);
+      }
+    });
+  }, [clases]);
 
   const handleChange = (e) => {
     setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -66,11 +89,11 @@ export default function MisClases() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
-
-
-      {/* Filtros */}
       <div className="bg-neutral-900 p-4 rounded-lg mb-6 flex flex-wrap gap-4">
+        <label htmlFor="course_id" className="text-sm text-neutral-300">
+        </label>
         <input
+          id="course_id"
           name="course_id"
           type="number"
           placeholder="ID Curso"
@@ -97,10 +120,12 @@ export default function MisClases() {
               key={c.id}
               className="bg-neutral-800 p-4 rounded-lg border border-neutral-700"
             >
-              <h2 className="text-lg font-semibold">{c.subject}</h2>
+              <p className="text-xl text-neutral-100 font-semibold mb-2">
+                {CursosCache[c.course_id]?.name || 'Desconocida'}
+              </p>
               <p className="text-sm text-neutral-300 mb-1">{c.description}</p>
               <p className="text-sm text-neutral-400">
-                Modalidad: {c.modality} | Precio: ${c.price.toLocaleString()}
+                Precio: ${c.price.toLocaleString()}
               </p>
 
               <div className="mt-3 flex gap-2">
@@ -123,10 +148,10 @@ export default function MisClases() {
       )}
 
       <button
-        onClick={() => navigate('/perfil')}
+        onClick={() => navigate('/dashboard/tutor')}
         className="mt-8 bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded"
       >
-        ← Volver a perfil
+        ← Volver al dashboard
       </button>
     </div>
   );

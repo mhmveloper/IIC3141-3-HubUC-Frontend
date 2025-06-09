@@ -12,6 +12,12 @@ const WEEKDAYS = {
   Domingo: 'Sunday',
 };
 
+const HORAS = [
+  '08:20', '09:40', '11:00', '12:20',
+  '13:30', '14:50', '16:10', '17:30',
+  '18:50', '20:10',
+];
+
 export default function CrearHorario() {
   const navigate = useNavigate();
   const [weekday, setWeekday] = useState('Lunes');
@@ -57,7 +63,6 @@ export default function CrearHorario() {
           valid_until: valid_until_naive,
         };
 
-        console.log('Enviando:', payload);
         await api.post('/weekly-timeblocks', payload, {
           headers: { Authorization: `Bearer ${token}` },
         });

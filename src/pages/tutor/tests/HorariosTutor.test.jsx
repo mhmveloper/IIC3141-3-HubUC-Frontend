@@ -92,7 +92,7 @@ describe('Horarios', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/horarios/nuevo');
   });
 
-  it('navega correctamente a solicitudes', async () => {
+  it('navega correctamente al dashboard', async () => {
     api.get.mockResolvedValueOnce({ data: [] });
 
     render(
@@ -101,8 +101,8 @@ describe('Horarios', () => {
       </MemoryRouter>
     );
 
-    const btn = await screen.findByText(/volver a solicitudes/i);
+    const btn = await screen.findByText(/volver al dashboard/i);
     fireEvent.click(btn);
-    expect(mockNavigate).toHaveBeenCalledWith('/solicitudes');
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard/tutor');
   });
 });

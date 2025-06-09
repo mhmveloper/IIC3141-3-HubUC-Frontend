@@ -13,10 +13,9 @@ export default function PublicarClase() {
 
   /* ──────────────── Constantes UI ──────────────── */
   const HORAS = [
-    '08:00', '09:00', '10:00', '11:00',
-    '12:00', '13:00', '14:00', '15:00',
-    '16:00', '17:00', '18:00', '19:00',
-    '20:00',
+    '08:20', '09:40', '11:00', '12:20',
+    '13:30', '14:50', '16:10', '17:30',
+    '18:50', '20:10',
   ];
   const DIAS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
@@ -43,22 +42,37 @@ export default function PublicarClase() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
     try {
-      await api.post('/private-lessons', {
-        id_ramo: parseInt(ramo, 10),
-        horario: horarios,
-        precio: parseFloat(precio),
-        descripcion,
-      });
+      await api.post(
+        '/private-lessons',
+        {
+          tutor_id: user.id,
+          course_id: parseInt(ramo, 10),
+          price: parseInt(precio, 10),
+          description: descripcion,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setMensaje('✅ Clase publicada correctamente');
       setRamo('');
       setHorarios([]);
       setPrecio('');
       setDescripcion('');
-    } catch {
+    } catch (err) {
+      console.error(err);
       setMensaje('❌ Error al publicar la clase');
     }
   };
+
 
   /* ──────────────── Render ──────────────── */
   return (
