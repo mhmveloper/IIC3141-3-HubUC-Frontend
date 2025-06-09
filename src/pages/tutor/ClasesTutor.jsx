@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PublicarClase from "../../components/tutor/PublicarClase";
 import api from "../../services/api";
 
 export default function ClasesTutor() {
+  const navigate = useNavigate();
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,6 +70,12 @@ export default function ClasesTutor() {
     <div className="bg-neutral-950 min-h-screen text-white p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Solicitudes de clase</h1>
+        <button
+          onClick={() => navigate("/dashboard/tutor")}
+          className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
+        >
+          ← Volver al dashboard
+        </button>
       </div>
 
       <PublicarClase />

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../../services/api";
 import Reservacion from "./Reservacion";
 
 export default function Clases({ initialLessons = null }) {
+  const navigate = useNavigate();
   const [lessons, setLessons] = useState(initialLessons || []);
   const [loading, setLoading] = useState(initialLessons ? false : true);
   const [filters, setFilters] = useState({
@@ -116,6 +118,12 @@ export default function Clases({ initialLessons = null }) {
     <div className="bg-neutral-950 min-h-screen text-white p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Clases disponibles</h1>
+        <button
+          onClick={() => navigate("/dashboard/alumno")}
+          className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
+        >
+          ← Volver al panel principal
+        </button>
       </div>
 
       <div className="bg-neutral-900 p-4 rounded-lg mb-6 flex flex-wrap gap-4">

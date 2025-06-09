@@ -18,26 +18,10 @@ export default function Perfil() {
       <div className="flex flex-wrap gap-4">
         <button
           onClick={() => navigate("/clases")}
-          className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
+          className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
         >
-          ← Volver a clases
+          ← Volver al panel principal
         </button>
-
-        <button
-          onClick={() => navigate("/solicitudes/tutor")}
-          className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
-        >
-          ← Volver a solicitudes
-        </button>
-
-        {user.role === "tutor" && (
-          <button
-            onClick={() => navigate("/horarios")}
-            className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
-          >
-            Administrar horarios disponibles
-          </button>
-        )}
       </div>
     </div>
   );
