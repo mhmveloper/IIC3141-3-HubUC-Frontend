@@ -38,20 +38,6 @@ export default function TutorDashboard() {
     <div className="bg-neutral-950 min-h-screen text-white p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Panel Principal</h1>
-        <div className="flex gap-4">
-          <Link
-            to="/perfil"
-            className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200"
-          >
-            Ver perfil
-          </Link>
-          <button
-            onClick={() => console.log("logout")}
-            className="bg-violet-50 text-violet-600 hover:bg-red-400 hover:text-violet-50 px-4 py-2 rounded duration-200"
-          >
-            Cerrar sesión
-          </button>
-        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
