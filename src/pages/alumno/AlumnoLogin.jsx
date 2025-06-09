@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import api from '../../services/api';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function AlumnoLogin() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: 'student',
+    name: "",
+    email: "",
+    password: "",
+    role: "student",
   });
   const [message, setMessage] = useState(null);
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
-    setForm({ ...form, name: '' });
+    setForm({ ...form, name: "" });
     setMessage(null);
   };
 
@@ -28,7 +28,7 @@ export default function AlumnoLogin() {
     e.preventDefault();
     setMessage(null);
     try {
-      const endpoint = isLogin ? '/login' : '/register';
+      const endpoint = isLogin ? "/login" : "/register";
       const payload = isLogin
         ? { email: form.email, password: form.password }
         : form;
@@ -37,17 +37,19 @@ export default function AlumnoLogin() {
       const token = res.data.access_token;
 
       if (token) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
       }
 
-      setMessage(`✅ ${isLogin ? 'Ingreso' : 'Registro'} exitoso`);
+      setMessage(`✅ ${isLogin ? "Ingreso" : "Registro"} exitoso`);
       if (isLogin) {
-        navigate('/clases');
+        navigate("/dashboard/alumno");
       }
     } catch (err) {
-      const detail = err.response?.data?.detail || 'Error inesperado';
-      setMessage(`❌ ${typeof detail === 'string' ? detail : JSON.stringify(detail)}`);
+      const detail = err.response?.data?.detail || "Error inesperado";
+      setMessage(
+        `❌ ${typeof detail === "string" ? detail : JSON.stringify(detail)}`
+      );
     }
   };
 
@@ -58,7 +60,7 @@ export default function AlumnoLogin() {
         className="bg-neutral-800 p-6 rounded-xl flex flex-col gap-4 w-full max-w-sm"
       >
         <h2 className="text-xl font-semibold text-center mb-2">
-          {isLogin ? 'Ingreso Alumno' : 'Registro Alumno'}
+          {isLogin ? "Ingreso Alumno" : "Registro Alumno"}
         </h2>
 
         {!isLogin && (
@@ -93,15 +95,13 @@ export default function AlumnoLogin() {
           required
         />
 
-        {!isLogin && (
-          <input type="hidden" name="role" value="student" />
-        )}
+        {!isLogin && <input type="hidden" name="role" value="student" />}
 
         <button
           type="submit"
           className="bg-violet-600 hover:bg-violet-800 py-2 rounded text-white font-semibold"
         >
-          {isLogin ? 'Ingresar' : 'Registrarse'}
+          {isLogin ? "Ingresar" : "Registrarse"}
         </button>
 
         {message && <p className="text-sm text-center mt-2">{message}</p>}
@@ -112,8 +112,8 @@ export default function AlumnoLogin() {
           className="text-sm text-violet-300 hover:underline"
         >
           {isLogin
-            ? '¿No tienes cuenta? Regístrate aquí'
-            : '¿Ya tienes cuenta? Inicia sesión'}
+            ? "¿No tienes cuenta? Regístrate aquí"
+            : "¿Ya tienes cuenta? Inicia sesión"}
         </button>
 
         <Link

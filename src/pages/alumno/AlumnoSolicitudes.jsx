@@ -1,46 +1,22 @@
 import React, { useEffect, useState } from "react";
-import PublicarClase from "../../components/tutor/PublicarClase";
 import api from "../../services/api";
 
-export default function ClasesTutor() {
+export default function AlumnoSolicitudes() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const handleAceptar = async (id) => {
+  const handleEliminar = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await api.put(
-        `/reservations/${id}`,
-        { status: "accepted" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // Opcional: actualiza la lista de solicitudes tras aceptar
-      setSolicitudes((prev) => prev.filter((s) => s.id !== id));
-    } catch (error) {
-      console.error(`Error al aceptar solicitud ${id}:`, error);
-    }
-  };
-
-  const handleRechazar = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await api.put(
-        `/reservations/${id}`,
-        { status: "rejected" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.delete(`/reservations/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       // Opcional: actualiza la lista de solicitudes tras rechazar
       setSolicitudes((prev) => prev.filter((s) => s.id !== id));
     } catch (error) {
-      console.error(`Error al rechazar solicitud ${id}:`, error);
+      console.error(`Error al eliminar solicitud ${id}:`, error);
     }
   };
 
@@ -48,7 +24,7 @@ export default function ClasesTutor() {
     const fetchSolicitudes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await api.get("/reservations/tutor", {
+        const res = await api.get("/reservations/student", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -69,8 +45,6 @@ export default function ClasesTutor() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Solicitudes de clase</h1>
       </div>
-
-      <PublicarClase />
 
       {loading ? (
         <p className="mt-6 text-neutral-300">Cargando solicitudes...</p>
@@ -97,16 +71,10 @@ export default function ClasesTutor() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleAceptar(s.id)}
-                  className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200"
-                >
-                  Aceptar
-                </button>
-                <button
-                  onClick={() => handleRechazar(s.id)}
+                  onClick={() => handleEliminar(s.id)}
                   className="bg-violet-50 text-violet-600 hover:bg-red-400 hover:text-violet-50 px-4 py-2 rounded duration-200"
                 >
-                  Rechazar
+                  Eliminar
                 </button>
               </div>
             </div>

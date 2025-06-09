@@ -1,38 +1,38 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Perfil() {
   const navigate = useNavigate();
 
   // Simulación de datos: normalmente estos vendrían del contexto global o localStorage
-  const user = JSON.parse(localStorage.getItem('user'));  // Asegúrate de guardar esto al hacer login
+  const user = JSON.parse(localStorage.getItem("user")); // Asegúrate de guardar esto al hacer login
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
 
-      <p className="mb-2">Nombre: {user?.name || '[placeholder]'}</p>
-      <p className="mb-2">Correo: {user?.email || '[placeholder]'}</p>
-      <p className="mb-4">Rol: {user?.role || '[placeholder]'}</p>
+      <p className="mb-2">Nombre: {user?.name || "[placeholder]"}</p>
+      <p className="mb-2">Correo: {user?.email || "[placeholder]"}</p>
+      <p className="mb-4">Rol: {user?.role || "[placeholder]"}</p>
 
       <div className="flex flex-wrap gap-4">
         <button
-          onClick={() => navigate('/clases')}
+          onClick={() => navigate("/clases")}
           className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
         >
           ← Volver a clases
         </button>
 
         <button
-          onClick={() => navigate('/solicitudes')}
+          onClick={() => navigate("/solicitudes/tutor")}
           className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
         >
           ← Volver a solicitudes
         </button>
 
-        {user.role === 'tutor' && (
+        {user.role === "tutor" && (
           <button
-            onClick={() => navigate('/horarios')}
+            onClick={() => navigate("/horarios")}
             className="bg-violet-600 hover:bg-violet-800 px-4 py-2 rounded duration-200"
           >
             Administrar horarios disponibles
