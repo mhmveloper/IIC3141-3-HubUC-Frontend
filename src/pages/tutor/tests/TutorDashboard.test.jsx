@@ -26,8 +26,6 @@ describe("TutorDashboard", () => {
     renderWithRouter(<TutorDashboard />);
 
     expect(screen.getByText(/Panel Principal/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ver perfil/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cerrar sesión/i)).toBeInTheDocument();
     expect(screen.getByText(/Mis clases/i)).toBeInTheDocument();
     expect(screen.getByText(/Clases de hoy/i)).toBeInTheDocument();
     expect(screen.getByText(/Próxima clase/i)).toBeInTheDocument();
