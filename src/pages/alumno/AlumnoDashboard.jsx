@@ -18,7 +18,7 @@ export default function AlumnoDashboard() {
     const fetchSolicitudes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await api.get("/reservations/tutor", {
+        const res = await api.get("/reservations/student", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -74,7 +74,9 @@ export default function AlumnoDashboard() {
             <h2 className="text-lg font-semibold mb-1">
               Solicitudes pendientes
             </h2>
-            <p className="text-xl mb-4">{solicitudes.length}</p>
+            <p className="text-xl mb-4">
+              {solicitudes.filter((s) => s.status === "pending").length}
+            </p>
             {loading ? (
               <p className="mt-6 text-neutral-300">Cargando solicitudes...</p>
             ) : solicitudes.length === 0 ? (
