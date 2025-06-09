@@ -90,7 +90,10 @@ export default function MisClases() {
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
       <div className="bg-neutral-900 p-4 rounded-lg mb-6 flex flex-wrap gap-4">
+        <label htmlFor="course_id" className="text-sm text-neutral-300">
+        </label>
         <input
+          id="course_id"
           name="course_id"
           type="number"
           placeholder="ID Curso"

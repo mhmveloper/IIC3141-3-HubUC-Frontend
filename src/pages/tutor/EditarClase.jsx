@@ -61,8 +61,9 @@ export default function EditarClase() {
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
         <div>
-          <label className="block mb-2">Descripción</label>
+          <label htmlFor="description" className="block mb-2">Descripción</label>
           <textarea
+            id="description"
             name="description"
             value={clase.description || ''}
             onChange={handleChange}
@@ -73,8 +74,9 @@ export default function EditarClase() {
         </div>
 
         <div>
-          <label className="block mb-2">Precio</label>
+          <label htmlFor="price" className="block mb-2">Precio</label>
           <input
+            id="price"
             type="number"
             name="price"
             value={clase.price || ''}
