@@ -44,6 +44,7 @@ export default function Horario() {
       horaInicio: "08:20",
       duracionBloques: 2,
       titulo: "Matemáticas",
+      tutor: "Nombre tutor",
       estudiante: "Nombre estudiante",
     },
     {
@@ -52,6 +53,7 @@ export default function Horario() {
       horaInicio: "11:00",
       duracionBloques: 1,
       titulo: "Cálculo I",
+      tutor: "Nombre tutor",
       estudiante: "Nombre estudiante",
     },
     {
@@ -60,6 +62,7 @@ export default function Horario() {
       horaInicio: "12:20",
       duracionBloques: 1,
       titulo: "Cálculo II",
+      tutor: "Nombre tutor",
       estudiante: "Nombre estudiante",
     },
     {
@@ -68,6 +71,7 @@ export default function Horario() {
       horaInicio: "12:20",
       duracionBloques: 1,
       titulo: "Álgebra Lineal",
+      tutor: "Nombre tutor",
       estudiante: "Nombre estudiante",
     },
   ]);
@@ -144,6 +148,7 @@ export default function Horario() {
             <p>Hora: {infoClase?.horaInicio}</p>
             <p>Día: {infoClase?.dia}</p>
             <p>Duración: {infoClase?.duracionBloques} bloque(s)</p>
+            <p>Tutor: {infoClase?.tutor}</p>
             <p>Estudiante: {infoClase?.estudiante}</p>
 
             <button

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import PublicarClase from "../../components/tutor/PublicarClase";
 
 export default function MisClases() {
@@ -8,10 +8,10 @@ export default function MisClases() {
   const [clases, setClases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [CursosCache, setCursosCache] = useState({});
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [filters, setFilters] = useState({
-    course_id: '',
+    course_id: "",
   });
 
   const fetchCurso = async (courseId) => {
@@ -31,22 +31,21 @@ export default function MisClases() {
       const query = new URLSearchParams({
         ...(course_id && { course_id: parseInt(course_id).toString() }),
         tutor_id: user.id.toString(),
-        order_by: 'created_at',
-        order: 'desc',
-        page: '1',
-        page_size: '10',
+        order_by: "created_at",
+        order: "desc",
+        page: "1",
+        page_size: "10",
       });
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const res = await api.get(`/private-lessons/search?${query.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const clasesObtenidas = res.data?.results || [];
       setClases(clasesObtenidas);
-
     } catch (err) {
-      console.error('Error al obtener clases:', err);
+      console.error("Error al obtener clases:", err);
     } finally {
       setLoading(false);
     }
@@ -57,7 +56,7 @@ export default function MisClases() {
   }, []);
 
   useEffect(() => {
-    const uniqueCourseIds = [...new Set(clases.map(c => c.course_id))];
+    const uniqueCourseIds = [...new Set(clases.map((c) => c.course_id))];
     uniqueCourseIds.forEach((id) => {
       if (!CursosCache[id]) {
         fetchCurso(id);
@@ -66,25 +65,33 @@ export default function MisClases() {
   }, [clases]);
 
   const handleEliminar = async (id) => {
-    const confirmar = confirm('¿Estás seguro de eliminar esta clase?');
+    const confirmar = confirm("¿Estás seguro de eliminar esta clase?");
     if (!confirmar) return;
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await api.delete(`/private-lessons/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setClases((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
-      console.error('Error al eliminar clase:', err);
+      console.error("Error al eliminar clase:", err);
     }
   };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
-      <h1 className="text-2xl font-bold mb-4">Mis  Clases</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Mis Clases</h1>
+        <button
+          onClick={() => navigate("/dashboard/tutor")}
+          className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
+        >
+          ← Volver al panel principal
+        </button>
+      </div>
 
-      <PublicarClase onPublicar={fetchClases}/>
+      <PublicarClase onPublicar={fetchClases} />
 
       {loading ? (
         <p className="text-neutral-400">Cargando clases...</p>
@@ -98,7 +105,7 @@ export default function MisClases() {
               className="bg-neutral-800 p-4 rounded-lg border border-neutral-700"
             >
               <p className="text-xl text-neutral-100 font-semibold mb-2">
-                {CursosCache[c.course_id]?.name || 'Desconocida'}
+                {CursosCache[c.course_id]?.name || "Desconocida"}
               </p>
               <p className="text-sm text-neutral-300 mb-1">{c.description}</p>
               <p className="text-sm text-neutral-400">
@@ -125,7 +132,7 @@ export default function MisClases() {
       )}
 
       <button
-        onClick={() => navigate('/dashboard/tutor')}
+        onClick={() => navigate("/dashboard/tutor")}
         className="mt-8 bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded"
       >
         ← Volver al panel principal
