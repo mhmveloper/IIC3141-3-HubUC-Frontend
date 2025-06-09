@@ -5,7 +5,6 @@ import api from "../../services/api";
 
 export default function AlumnoDashboard() {
   const [solicitudes, setSolicitudes] = useState([]);
-  const [pendientes, setPendientes] = useState([]);
   const [loading, setLoading] = useState(true);
   console.log(solicitudes);
 
@@ -25,7 +24,6 @@ export default function AlumnoDashboard() {
           },
         });
         setSolicitudes(res.data);
-        setPendientes(solicitudes.filter((s) => s.status === "pending").length);
       } catch (error) {
         console.error("Error al obtener solicitudes:", error);
       } finally {
@@ -82,7 +80,9 @@ export default function AlumnoDashboard() {
               <p className="mt-6 text-neutral-400">No hay solicitudes aún.</p>
             ) : (
               <div>
-                <p className="text-xl mb-4">{pendientes}</p>
+                <p className="text-xl mb-4">
+                  {solicitudes.filter((s) => s.status === "pending").length}
+                </p>
                 <Link
                   to="/solicitudes/alumno"
                   className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
