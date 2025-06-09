@@ -3,22 +3,22 @@ import { Link } from "react-router-dom";
 import Horario from "../../components/common/Horario";
 import api from "../../services/api";
 
-export default function TutorDashboard() {
+export default function AlumnoDashboard() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   console.log(solicitudes);
 
   // datos hardcodeados
   const resumen = {
-    clasesHoy: 2,
-    proximaClase: "Matemáticas - 09:40 hrs",
+    clasesHoy: 1,
+    proximaClase: "Álgebra Lineal - 12:20 hrs",
   };
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await api.get("/reservations/tutor", {
+        const res = await api.get("/reservations/student", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -49,19 +49,13 @@ export default function TutorDashboard() {
 
         <div className="w-full lg:w-80 flex flex-col gap-4">
           <div className="bg-neutral-800 p-4 rounded-lg border border-neutral-700">
-            <h2 className="text-lg font-semibold mb-1">Mis clases</h2>
+            <h2 className="text-lg font-semibold mb-1">Buscar clases</h2>
             <div className="flex gap-4">
               <Link
-                to="/mis-clases"
+                to="/clases"
                 className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
               >
                 Ver clases
-              </Link>
-              <Link
-                to="/horarios"
-                className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
-              >
-                Editar horarios
               </Link>
             </div>
           </div>
