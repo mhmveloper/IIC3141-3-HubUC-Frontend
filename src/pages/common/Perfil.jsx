@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "../../services/api";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Placeholder contenedor Reviews
 function Reviews() {
@@ -12,20 +13,45 @@ function Reviews() {
 }
 
 export default function Perfil() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  // Simulación de datos: normalmente estos vendrían del contexto global o localStorage
-  const user = JSON.parse(localStorage.getItem("user")); // Asegúrate de guardar esto al hacer login
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(user?.name || "[placeholder]");
   const [email, setEmail] = useState(user?.email || "[placeholder]");
 
+  useEffect(() => {
+    async function fetchUser() {
+      setLoading(true);
+      try {
+        // Ejemplo: API para obtener usuario por id
+        const res = await axios.get(`/users/${id}`);
+        const data = res.data;
+        setUser(data);
+        setName(data.name);
+        setEmail(data.email);
+      } catch (error) {
+        console.error(error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUser();
+  }, [id]);
+
   const roleNames = {
     tutor: "Tutor",
     student: "Alumno",
   };
-  const displayRole = roleNames[user.role] || user.role || "[placeholder]";
+  const displayRole = roleNames[user?.role] || user?.role || "[placeholder]";
+
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const isOwner = id === String(loggedInUser?.id);
 
   const handleSaveChanges = () => {
     // Llamada API
@@ -33,15 +59,20 @@ export default function Perfil() {
     setEditMode(false);
   };
 
+  if (loading) return <p className="text-white p-8">Cargando perfil...</p>;
+  if (!user) return <p className="text-white p-8">Usuario no encontrado</p>;
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Mi Perfil</h1>
+        <h1 className="text-2xl font-bold">
+          {isOwner ? "Mi Perfil" : `Perfil de ${user.name}`}
+        </h1>
         <button
-          onClick={() => navigate("/dashboard/tutor")}
+          onClick={() => navigate(-1)}
           className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
         >
-          ← Volver al panel principal
+          ← Volver
         </button>
       </div>
 
@@ -51,7 +82,6 @@ export default function Perfil() {
             {displayRole}
           </span>
 
-          {/* Contenido principal con scroll si es necesario */}
           <div className="overflow-auto mb-4">
             <div className="mb-4">
               <label
@@ -98,36 +128,37 @@ export default function Perfil() {
             </div>
           </div>
 
-          {/* Botones abajo */}
-          <div className="flex justify-end space-x-3 mt-auto">
-            {editMode ? (
-              <>
+          {isOwner && (
+            <div className="flex justify-end space-x-3 mt-auto">
+              {editMode ? (
+                <>
+                  <button
+                    onClick={handleSaveChanges}
+                    className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setName(user?.name || "");
+                      setEmail(user?.email || "");
+                      setEditMode(false);
+                    }}
+                    className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
+                  >
+                    Cancelar
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={handleSaveChanges}
+                  onClick={() => setEditMode(true)}
                   className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
                 >
-                  Guardar
+                  Editar perfil
                 </button>
-                <button
-                  onClick={() => {
-                    setName(user?.name || "");
-                    setEmail(user?.email || "");
-                    setEditMode(false);
-                  }}
-                  className="bg-neutral-700 hover:bg-neutral-800 px-4 py-2 rounded duration-200"
-                >
-                  Cancelar
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setEditMode(true)}
-                className="bg-violet-600 hover:bg-violet-800 px-3 py-1 rounded duration-200 inline-block"
-              >
-                Editar perfil
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {user?.role === "tutor" && (
